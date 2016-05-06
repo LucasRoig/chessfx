@@ -24,8 +24,7 @@ public class Bitboard {
 		if (Bitboard.startingBitboard == null) {
 			Bitboard bitboard = new Bitboard();
 			bitboard.black = Long.parseUnsignedLong("18446462598732840960");
-			
-			
+
 			bitboard.white = Long.parseUnsignedLong("65535");
 			bitboard.pawns = Long.parseUnsignedLong("71776119061282560");
 			bitboard.knights = Long.parseUnsignedLong("4755801206503243842");
@@ -33,7 +32,7 @@ public class Bitboard {
 			bitboard.rooks = Long.parseUnsignedLong("9295429630892703873");
 			bitboard.queens = Long.parseUnsignedLong("576460752303423496");
 			bitboard.kings = Long.parseUnsignedLong("1152921504606846992");
-			System.out.println(Long.toBinaryString((long)1<<63));
+			System.out.println(Long.toBinaryString((long) 1 << 63));
 			Bitboard.startingBitboard = bitboard;
 		}
 		return Bitboard.startingBitboard;
@@ -53,86 +52,106 @@ public class Bitboard {
 		this.queens = 0;
 		this.kings = 0;
 	}
-	
-	public String toString(){
+
+	/**
+	 * Renvoie un nouveau bitboard etant une copie du bitboard actuel
+	 */
+	public Bitboard copy() {
+		Bitboard bitboard = new Bitboard();
+		bitboard.black = this.black;
+		bitboard.white = this.white;
+		bitboard.pawns = this.pawns;
+		bitboard.bishops = this.bishops;
+		bitboard.knights = this.knights;
+		bitboard.rooks = this.rooks;
+		bitboard.queens = this.queens;
+		bitboard.kings = this.kings;
+		return bitboard;
+	}
+
+	public String toString() {
 		String str = "";
 		int i = 56;
-		while(i >= 0){
+		while (i >= 0) {
 			Piece piece = this.getPieceAt(i);
-			if(piece != null){
+			if (piece != null) {
 				str += piece.toString();
-			}else{
-				str += "-";
+			} else {
+				str += "    ";
 			}
 			i++;
-			if(i % 8 == 0){
+			if (i % 8 == 0) {
 				i -= 16;
 				str += '\n';
 			}
 		}
 		return str;
 	}
-	//---------Methodes pour les pieces--------
+
+	// ---------Methodes pour les pieces--------
 	/**
-	 * Retourne la piece occupant la case passee en parametre
-	 * retourne null si aucune piece n'est presente
+	 * Retourne la piece occupant la case passee en parametre retourne null si
+	 * aucune piece n'est presente
+	 * 
 	 * @param square
 	 * @return
 	 */
-	public Piece getPieceAt(long square){
+	public Piece getPieceAt(long square) {
 		ChessColors color;
-		square = (long)1 << square;
-		if((this.black & square) != 0){
+		square = (long) 1 << square;
+		if ((this.black & square) != 0) {
 			color = ChessColors.Black;
-		}else if((this.white & square) != 0){
+		} else if ((this.white & square) != 0) {
 			color = ChessColors.White;
-		}else{
+		} else {
 			return null;
 		}
-		
-		if((this.pawns & square) != 0){
+
+		if ((this.pawns & square) != 0) {
 			return new Pawn(color);
-		}else if((this.knights & square) != 0){
+		} else if ((this.knights & square) != 0) {
 			return new Knight(color);
-		}else if((this.bishops & square) != 0){
+		} else if ((this.bishops & square) != 0) {
 			return new Bishop(color);
-		}else if((this.rooks & square) != 0){
+		} else if ((this.rooks & square) != 0) {
 			return new Rook(color);
-		}else if((this.queens & square) != 0){
+		} else if ((this.queens & square) != 0) {
 			return new Queen(color);
-		}else if((this.kings & square) != 0){
+		} else if ((this.kings & square) != 0) {
 			return new King(color);
-		}else{
+		} else {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Place la piece passee en parametre sur la case passee en parametre
+	 * 
 	 * @param piece
 	 * @param square
 	 */
-	public void setPieceAt(Piece piece, long square){
+	public void setPieceAt(Piece piece, long square) {
 		piece.setAt(square, this);
 	}
-	
+
 	/**
 	 * Enleve une piece de la case passee en parametre
+	 * 
 	 * @param square
 	 */
-	public void removeAt(long square){
-		long one = (long)1 << square;
-		this.black ^= one;
-		this.white ^= one;
-		this.pawns ^= one;
-		this.bishops ^= one;
-		this.knights ^= one;
-		this.rooks ^= one;
-		this.queens ^= one;
-		this.kings ^= one;
+	public void removeAt(long square) {
+		long one = Long.parseUnsignedLong("FFFFFFFFFFFFFFFF", 16) - ((long) 1 << square);
+		this.black &= one;
+		this.white &= one;
+		this.pawns &= one;
+		this.bishops &= one;
+		this.knights &= one;
+		this.rooks &= one;
+		this.queens &= one;
+		this.kings &= one;
 	}
 
-	//-----------Tests sur l'échiquier----------
+	// -----------Tests sur l'échiquier----------
 	/**
 	 * Retourne true si tous les entiers sont à 0
 	 * 
@@ -146,7 +165,8 @@ public class Bitboard {
 	/**
 	 * Retourne True si b est dans la meme disposition que le bitboard actuel
 	 * 
-	 * @param b BitBoard           
+	 * @param b
+	 *            BitBoard
 	 * @return
 	 */
 	public boolean equals(Bitboard b) {

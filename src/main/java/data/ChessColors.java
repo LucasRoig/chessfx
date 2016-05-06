@@ -1,5 +1,5 @@
 package data;
 
 public enum ChessColors {
-	Black,White;
+	Black, White;
 }
