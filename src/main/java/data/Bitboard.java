@@ -7,14 +7,14 @@ package data;
  *
  */
 public class Bitboard {
-	long white; // Présence des pièces Blanches
-	long black; // Présence des pièces Noires
-	long pawns; // Présence des pions
-	long knights; // Présence des cavaliers
-	long bishops; // Présence des fous
-	long rooks; // Présence des tours
-	long queens;// présence des dames
-	long kings; // présence des rois
+	public long white; // Présence des pièces Blanches
+	public long black; // Présence des pièces Noires
+	public long pawns; // Présence des pions
+	public long knights; // Présence des cavaliers
+	public long bishops; // Présence des fous
+	public long rooks; // Présence des tours
+	public long queens;// présence des dames
+	public long kings; // présence des rois
 
 	// ---------Methodes Statiques-------------
 
@@ -54,6 +54,25 @@ public class Bitboard {
 		this.kings = 0;
 	}
 	
+	public String toString(){
+		String str = "";
+		int i = 56;
+		while(i >= 0){
+			Piece piece = this.getPieceAt(i);
+			if(piece != null){
+				str += piece.toString();
+			}else{
+				str += "-";
+			}
+			i++;
+			if(i % 8 == 0){
+				i -= 16;
+				str += '\n';
+			}
+		}
+		return str;
+	}
+	//---------Methodes pour les pieces--------
 	/**
 	 * Retourne la piece occupant la case passee en parametre
 	 * retourne null si aucune piece n'est presente
@@ -88,24 +107,31 @@ public class Bitboard {
 		}
 	}
 	
-	public String toString(){
-		String str = "";
-		int i = 56;
-		while(i >= 0){
-			Piece piece = this.getPieceAt(i);
-			if(piece != null){
-				str += piece.toString();
-			}else{
-				str += "-";
-			}
-			i++;
-			if(i % 8 == 0){
-				i -= 16;
-				str += '\n';
-			}
-		}
-		return str;
+	/**
+	 * Place la piece passee en parametre sur la case passee en parametre
+	 * @param piece
+	 * @param square
+	 */
+	public void setPieceAt(Piece piece, long square){
+		piece.setAt(square, this);
 	}
+	
+	/**
+	 * Enleve une piece de la case passee en parametre
+	 * @param square
+	 */
+	public void removeAt(long square){
+		long one = (long)1 << square;
+		this.black ^= one;
+		this.white ^= one;
+		this.pawns ^= one;
+		this.bishops ^= one;
+		this.knights ^= one;
+		this.rooks ^= one;
+		this.queens ^= one;
+		this.kings ^= one;
+	}
+
 	//-----------Tests sur l'échiquier----------
 	/**
 	 * Retourne true si tous les entiers sont à 0
