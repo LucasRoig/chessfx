@@ -1,5 +1,7 @@
 package data;
 
+import java.util.ArrayList;
+
 public class Bishop extends Piece {
 	public Bishop(ChessColors color) {
 		this.color = color;
@@ -44,5 +46,61 @@ public class Bishop extends Piece {
 	@Override
 	public String getLetter() {
 		return "B";
+	}
+
+	@Override
+	public long attacks(long fromVector, Bitboard board) {
+		ArrayList<Long> bishopsList = new ArrayList<>();
+		long copyVector = fromVector;
+		while(copyVector != 0){
+			long square = Util.lessSignificantBit(copyVector);
+			bishopsList.add(square);
+			copyVector &= ~((long)1 << square);
+		}
+		
+		long result = 0;
+		for (Long bishop : bishopsList) {
+			//Nord Ouest
+			long withoutCollisions = Util.northWest(bishop);
+			long collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.lessSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.northWest(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+			
+			//Nord Est
+			withoutCollisions = Util.northEast(bishop);
+			collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.lessSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.northEast(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+			
+			//Sud Est
+			withoutCollisions = Util.southEast(bishop);
+			collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.mostSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.southEast(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+			
+			//Sud Ouest
+			withoutCollisions = Util.southWest(bishop);
+			collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.mostSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.southWest(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+		}
+		
+		return result;
 	}
 }

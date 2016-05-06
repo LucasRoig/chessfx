@@ -48,7 +48,7 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector) {
+	public long attacks(long fromVector,Bitboard b) {
 		if(this.color == ChessColors.White){
 			return whiteAttacks(fromVector);
 		}else{

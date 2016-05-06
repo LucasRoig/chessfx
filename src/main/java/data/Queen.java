@@ -45,4 +45,14 @@ public class Queen extends Piece {
 	public String getLetter() {
 		return "Q";
 	}
+
+	@Override
+	public long attacks(long fromVector, Bitboard board) {
+		long resultat = 0;
+		Bishop b = new Bishop(ChessColors.White);
+		Rook r = new Rook(ChessColors.White);
+		resultat |= b.attacks(fromVector, board);
+		resultat |= r.attacks(fromVector, board);
+		return resultat;
+	}
 }

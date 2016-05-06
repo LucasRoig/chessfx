@@ -26,5 +26,5 @@ public abstract class Piece {
 	 * @param fromVector
 	 * @return
 	 */
-	public abstract long attacks(long fromVector);
+	public abstract long attacks(long fromVector, Bitboard board);
 }

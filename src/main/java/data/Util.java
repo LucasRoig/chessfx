@@ -43,7 +43,7 @@ public class Util {
 		if(bb == 0){
 			throw new RuntimeException("Pas de bit à 1");
 		}
-		return index64Less[(int) (((bb & -bb) * debruijn64) >> 58)];
+		return index64Less[(int) (((bb & -bb) * debruijn64) >>> 58)];
 	}
 
 	static int[] index64Most = {

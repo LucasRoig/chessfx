@@ -47,7 +47,7 @@ public class King extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector) {
+	public long attacks(long fromVector,Bitboard b) {
 		long attack = Util.eastOne(fromVector) | Util.westOne(fromVector);
 		fromVector |= attack;
 		attack |= Util.northOne(fromVector) | Util.southOne(fromVector);

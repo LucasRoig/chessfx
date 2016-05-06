@@ -1,5 +1,7 @@
 package data;
 
+import java.util.ArrayList;
+
 public class Rook extends Piece {
 	public Rook(ChessColors color) {
 		this.color = color;
@@ -44,5 +46,61 @@ public class Rook extends Piece {
 	@Override
 	public String getLetter() {
 		return "R";
+	}
+
+	@Override
+	public long attacks(long fromVector,Bitboard board) {
+		ArrayList<Long> rooksList = new ArrayList<>();
+		long copyVector = fromVector;
+		while(copyVector != 0){
+			long square = Util.lessSignificantBit(copyVector);
+			rooksList.add(square);
+			copyVector &= ~((long)1 << square); //suppresion du bit a 1 dans copyVector
+		}
+
+		long result = 0;
+		for (Long rook : rooksList) {
+			//Deplacement vers le haut
+			long withoutCollisions = Util.north(rook);
+			long collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.lessSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.north(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+			
+
+			//Deplacement vers le bas
+			withoutCollisions = Util.south(rook);
+			collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.mostSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.south(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+
+			//Deplacement vers l'est
+			withoutCollisions = Util.east(rook);
+			collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.lessSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.east(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+
+			//Deplacement vers l'ouest
+			withoutCollisions = Util.west(rook);
+			collisions = withoutCollisions & (board.white | board.black);
+			if (collisions != 0){
+				long firstCollision = Util.mostSignificantBit(collisions);
+				result |= (withoutCollisions ^ Util.west(firstCollision));
+			}else{
+				result |= withoutCollisions;
+			}
+		}
+		return result;
 	}
 }

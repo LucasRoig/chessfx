@@ -47,7 +47,7 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector) {
+	public long attacks(long fromVector,Bitboard board) {
 		long attack = (fromVector & Util.notAFile & Util.notBFile & Util.not1row) >>> 10;
 		attack |= (fromVector & Util.notAFile & Util.not1row & Util.not2row) >>> 17;
 		attack |= (fromVector & Util.notHFile & Util.not1row & Util.not2row) >>> 15;
