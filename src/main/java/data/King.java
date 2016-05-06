@@ -45,4 +45,12 @@ public class King extends Piece {
 	public String getLetter() {
 		return "K";
 	}
+
+	@Override
+	public long attacks(long fromVector) {
+		long attack = Util.eastOne(fromVector) | Util.westOne(fromVector);
+		fromVector |= attack;
+		attack |= Util.northOne(fromVector) | Util.southOne(fromVector);
+		return attack;
+	}
 }

@@ -46,4 +46,25 @@ public class Pawn extends Piece {
 	public String getLetter() {
 		return "";
 	}
+
+	@Override
+	public long attacks(long fromVector) {
+		if(this.color == ChessColors.White){
+			return whiteAttacks(fromVector);
+		}else{
+			return blackAttacks(fromVector);
+		}
+		
+	}
+	
+	private long whiteAttacks(long fromVector){
+		long west = (fromVector << 9) & Util.notAFile;
+		long east = (fromVector << 7) & Util.notHFile;
+		return west | east;
+	}
+	private long blackAttacks(long fromVector){
+		long west = (fromVector >>> 9) & Util.notHFile;
+		long east = (fromVector >>> 7) & Util.notAFile;
+		return west | east;
+	}
 }

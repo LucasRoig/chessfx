@@ -20,4 +20,11 @@ public abstract class Piece {
 	 * @return
 	 */
 	public abstract String getLetter();
+	
+	/**
+	 * Retourne un vecteur representant toutes les cases attaquées par les pieces présentes sur le vecteur passé en paramètre.
+	 * @param fromVector
+	 * @return
+	 */
+	public abstract long attacks(long fromVector);
 }

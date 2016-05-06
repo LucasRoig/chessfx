@@ -45,4 +45,17 @@ public class Knight extends Piece {
 	public String getLetter() {
 		return "N";
 	}
+
+	@Override
+	public long attacks(long fromVector) {
+		long attack = (fromVector & Util.notAFile & Util.notBFile & Util.not1row) >>> 10;
+		attack |= (fromVector & Util.notAFile & Util.not1row & Util.not2row) >>> 17;
+		attack |= (fromVector & Util.notHFile & Util.not1row & Util.not2row) >>> 15;
+		attack |= (fromVector & Util.notGFile & Util.notHFile & Util.not1row) >>> 6;
+		attack |= (fromVector & Util.notGFile & Util.notHFile & Util.not8row) << 10;
+		attack |= (fromVector & Util.notHFile & Util.not8row & Util.not7row) << 17;
+		attack |= (fromVector & Util.notAFile & Util.not8row & Util.not7row) << 15;
+		attack |= (fromVector & Util.notAFile & Util.notBFile & Util.not8row) << 6;
+		return attack;
+	}
 }
