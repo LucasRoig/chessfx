@@ -5,7 +5,13 @@ public abstract class Piece {
 
 	public abstract String toString();
 
-	public abstract long possibleMoves(int square, Bitboard bitboard);
+	public long possibleMoves(long square, Bitboard bitboard) {
+		long squareVector = (long) 1 << square;
+		long attackedSquares = this.attacks(squareVector, bitboard);
+		long moves = this.color == ChessColors.White ? attackedSquares ^ bitboard.white
+				: attackedSquares ^ bitboard.black;
+		return moves;
+	}
 
 	/**
 	 * Modifie le bitboard afin de placer une piece sur une case donnée.
@@ -20,9 +26,11 @@ public abstract class Piece {
 	 * @return
 	 */
 	public abstract String getLetter();
-	
+
 	/**
-	 * Retourne un vecteur representant toutes les cases attaquées par les pieces présentes sur le vecteur passé en paramètre.
+	 * Retourne un vecteur representant toutes les cases attaquées par les
+	 * pieces présentes sur le vecteur passé en paramètre.
+	 * 
 	 * @param fromVector
 	 * @return
 	 */

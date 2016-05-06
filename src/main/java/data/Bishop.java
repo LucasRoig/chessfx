@@ -13,12 +13,6 @@ public class Bishop extends Piece {
 	}
 
 	@Override
-	public long possibleMoves(int square, Bitboard bitboard) {
-		// TODO A compléter
-		return 0;
-	}
-
-	@Override
 	public void setAt(long square, Bitboard bitboard) {
 		// On place les 1 ou il faut
 		long un = (long) 1 << square;
@@ -52,55 +46,55 @@ public class Bishop extends Piece {
 	public long attacks(long fromVector, Bitboard board) {
 		ArrayList<Long> bishopsList = new ArrayList<>();
 		long copyVector = fromVector;
-		while(copyVector != 0){
+		while (copyVector != 0) {
 			long square = Util.lessSignificantBit(copyVector);
 			bishopsList.add(square);
-			copyVector &= ~((long)1 << square);
+			copyVector &= ~((long) 1 << square);
 		}
-		
+
 		long result = 0;
 		for (Long bishop : bishopsList) {
-			//Nord Ouest
+			// Nord Ouest
 			long withoutCollisions = Util.northWest(bishop);
 			long collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.lessSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.northWest(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
-			
-			//Nord Est
+
+			// Nord Est
 			withoutCollisions = Util.northEast(bishop);
 			collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.lessSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.northEast(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
-			
-			//Sud Est
+
+			// Sud Est
 			withoutCollisions = Util.southEast(bishop);
 			collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.mostSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.southEast(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
-			
-			//Sud Ouest
+
+			// Sud Ouest
 			withoutCollisions = Util.southWest(bishop);
 			collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.mostSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.southWest(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
 		}
-		
+
 		return result;
 	}
 }

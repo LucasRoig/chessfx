@@ -11,12 +11,6 @@ public class King extends Piece {
 	}
 
 	@Override
-	public long possibleMoves(int square, Bitboard bitboard) {
-		// TODO A compléter
-		return 0;
-	}
-
-	@Override
 	public void setAt(long square, Bitboard bitboard) {
 		// On place les 1 ou il faut
 		long un = (long) 1 << square;
@@ -47,7 +41,7 @@ public class King extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector,Bitboard b) {
+	public long attacks(long fromVector, Bitboard b) {
 		long attack = Util.eastOne(fromVector) | Util.westOne(fromVector);
 		fromVector |= attack;
 		attack |= Util.northOne(fromVector) | Util.southOne(fromVector);

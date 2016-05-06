@@ -12,9 +12,30 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public long possibleMoves(int square, Bitboard bitboard) {
-		// TODO A compléter
-		return 0;
+	public long possibleMoves(long square, Bitboard bitboard) {
+		long moves = 0;
+		long squareVector = (long) 1 << square;
+		long attackedSquares = this.attacks(squareVector, bitboard);
+		if (this.color == ChessColors.White) {
+			moves = attackedSquares & bitboard.black;
+			moves |= Util.northOne(squareVector);
+			// est sur la deuxieme rangée
+			if ((squareVector & (~Util.not2row)) != 0) {
+				moves |= Util.northOne(Util.northOne(squareVector));// 2 vers le
+																	// haut
+			}
+			moves ^= bitboard.white;
+		} else {
+			moves = attackedSquares & bitboard.white;
+			moves |= Util.southOne(squareVector);
+			// est sur la 7eme rangée
+			if ((squareVector & (~Util.not7row)) != 0) {
+				moves |= Util.southOne(Util.southOne(squareVector));// 2 vers le
+																	// bas
+			}
+			moves ^= bitboard.black;
+		}
+		return moves;
 	}
 
 	@Override
@@ -48,21 +69,22 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector,Bitboard b) {
-		if(this.color == ChessColors.White){
+	public long attacks(long fromVector, Bitboard b) {
+		if (this.color == ChessColors.White) {
 			return whiteAttacks(fromVector);
-		}else{
+		} else {
 			return blackAttacks(fromVector);
 		}
-		
+
 	}
-	
-	private long whiteAttacks(long fromVector){
+
+	private long whiteAttacks(long fromVector) {
 		long west = (fromVector << 9) & Util.notAFile;
 		long east = (fromVector << 7) & Util.notHFile;
 		return west | east;
 	}
-	private long blackAttacks(long fromVector){
+
+	private long blackAttacks(long fromVector) {
 		long west = (fromVector >>> 9) & Util.notHFile;
 		long east = (fromVector >>> 7) & Util.notAFile;
 		return west | east;

@@ -174,9 +174,9 @@ public class Bitboard {
 				&& b.bishops == this.bishops && b.rooks == this.rooks && b.queens == this.queens
 				&& b.kings == this.kings;
 	}
-	
+
 	// ---------Cases Attaquees--------------------
-	public long getSquaresAttackedByWhite(){
+	public long getSquaresAttackedByWhite() {
 		long resultat = new Pawn(ChessColors.White).attacks(this.pawns & this.white, this);
 		resultat |= new Knight(ChessColors.White).attacks(this.knights & this.white, this);
 		resultat |= new Bishop(ChessColors.White).attacks(this.bishops & this.white, this);
@@ -185,7 +185,8 @@ public class Bitboard {
 		resultat |= new King(ChessColors.White).attacks(this.kings & this.white, this);
 		return resultat;
 	}
-	public long getSquaresAttackedByBlack(){
+
+	public long getSquaresAttackedByBlack() {
 		long resultat = new Pawn(ChessColors.Black).attacks(this.pawns & this.black, this);
 		resultat |= new Knight(ChessColors.Black).attacks(this.knights & this.black, this);
 		resultat |= new Bishop(ChessColors.Black).attacks(this.bishops & this.black, this);
@@ -194,5 +195,5 @@ public class Bitboard {
 		resultat |= new King(ChessColors.Black).attacks(this.kings & this.black, this);
 		return resultat;
 	}
-	
+
 }

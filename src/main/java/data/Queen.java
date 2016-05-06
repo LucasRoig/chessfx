@@ -11,12 +11,6 @@ public class Queen extends Piece {
 	}
 
 	@Override
-	public long possibleMoves(int square, Bitboard bitboard) {
-		// TODO A compléter
-		return 0;
-	}
-
-	@Override
 	public void setAt(long square, Bitboard bitboard) {
 		// On place les 1 ou il faut
 		long un = (long) 1 << square;

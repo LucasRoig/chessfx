@@ -11,12 +11,6 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public long possibleMoves(int square, Bitboard bitboard) {
-		// TODO A compléter
-		return 0;
-	}
-
-	@Override
 	public void setAt(long square, Bitboard bitboard) {
 		// On place les 1 ou il faut
 		long un = (long) 1 << square;
@@ -47,7 +41,7 @@ public class Knight extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector,Bitboard board) {
+	public long attacks(long fromVector, Bitboard board) {
 		long attack = (fromVector & Util.notAFile & Util.notBFile & Util.not1row) >>> 10;
 		attack |= (fromVector & Util.notAFile & Util.not1row & Util.not2row) >>> 17;
 		attack |= (fromVector & Util.notHFile & Util.not1row & Util.not2row) >>> 15;

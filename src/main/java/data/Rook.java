@@ -13,12 +13,6 @@ public class Rook extends Piece {
 	}
 
 	@Override
-	public long possibleMoves(int square, Bitboard bitboard) {
-		// TODO A compléter
-		return 0;
-	}
-
-	@Override
 	public void setAt(long square, Bitboard bitboard) {
 		// On place les 1 ou il faut
 		long un = (long) 1 << square;
@@ -49,55 +43,55 @@ public class Rook extends Piece {
 	}
 
 	@Override
-	public long attacks(long fromVector,Bitboard board) {
+	public long attacks(long fromVector, Bitboard board) {
 		ArrayList<Long> rooksList = new ArrayList<>();
 		long copyVector = fromVector;
-		while(copyVector != 0){
+		while (copyVector != 0) {
 			long square = Util.lessSignificantBit(copyVector);
 			rooksList.add(square);
-			copyVector &= ~((long)1 << square); //suppresion du bit a 1 dans copyVector
+			copyVector &= ~((long) 1 << square); // suppresion du bit a 1 dans
+													// copyVector
 		}
 
 		long result = 0;
 		for (Long rook : rooksList) {
-			//Deplacement vers le haut
+			// Deplacement vers le haut
 			long withoutCollisions = Util.north(rook);
 			long collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.lessSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.north(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
-			
 
-			//Deplacement vers le bas
+			// Deplacement vers le bas
 			withoutCollisions = Util.south(rook);
 			collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.mostSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.south(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
 
-			//Deplacement vers l'est
+			// Deplacement vers l'est
 			withoutCollisions = Util.east(rook);
 			collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.lessSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.east(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
 
-			//Deplacement vers l'ouest
+			// Deplacement vers l'ouest
 			withoutCollisions = Util.west(rook);
 			collisions = withoutCollisions & (board.white | board.black);
-			if (collisions != 0){
+			if (collisions != 0) {
 				long firstCollision = Util.mostSignificantBit(collisions);
 				result |= (withoutCollisions ^ Util.west(firstCollision));
-			}else{
+			} else {
 				result |= withoutCollisions;
 			}
 		}
