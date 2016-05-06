@@ -73,8 +73,36 @@ public class Position {
 	public ArrayList<Position> getSublines() {
 		return sublines;
 	}
-	// --------------------------------------------------
-
+	// --------------Tests sur la position-------------
+	
+	/**
+	 * Retourne true si la position actuelle est légale
+	 */
+	public boolean isPositionLegal(){
+		//Compte le nombre de rois
+		if(Long.bitCount(this.bitboard.kings & this.bitboard.white) != 1 || Long.bitCount(this.bitboard.kings & this.bitboard.black) != 1){
+			return false;
+		}
+		
+		//Compte les pions
+		if(Long.bitCount(this.bitboard.pawns & this.bitboard.white) > 8 || Long.bitCount(this.bitboard.pawns & this.bitboard.black) > 8){
+			return false;
+		}
+		
+		//Vérifie la position des pions
+		if((this.bitboard.pawns & (Util.row1 | Util.row8)) != 0){
+			return false;
+		}
+		
+		//Vérifie que le camp n'étant pas au trait n'est pas en échec
+		long kingSquare = this.sideToMove == ChessColors.White ? this.bitboard.kings & this.bitboard.black : this.bitboard.kings & this.bitboard.white;
+		long attackedSquares = this.sideToMove == ChessColors.White ? this.bitboard.getSquaresAttackedByWhite() : this.bitboard.getSquaresAttackedByBlack();
+		if((kingSquare & attackedSquares) != 0){
+			return false;
+		}
+		
+		return true;
+	}
 	/**
 	 * Retourne True s'il n'y a pas de piece dans la position
 	 * 
@@ -111,6 +139,8 @@ public class Position {
 		return this.getNextPosition() == null;
 	}
 
+	//--------------------------------------------------------------
+	
 	/**
 	 * Ajoute la position p en tant que variante
 	 * 
