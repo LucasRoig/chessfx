@@ -1,9 +1,9 @@
 package view;
 
-import data.Game;
-import data.Move;
-import data.Piece;
-import data.Position;
+import chessClassicData.Game;
+import chessClassicData.Move;
+import chessClassicData.Piece;
+import chessClassicData.Position;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 

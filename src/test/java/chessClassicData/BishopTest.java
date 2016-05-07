@@ -1,8 +1,12 @@
-package data;
+package chessClassicData;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import chessClassicData.Bishop;
+import chessClassicData.Bitboard;
+import chessClassicData.ChessColors;
 
 public class BishopTest {
 

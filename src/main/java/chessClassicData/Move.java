@@ -1,4 +1,4 @@
-package data;
+package chessClassicData;
 
 /**
  * Implementation d'un coup contient la case de depart, la case d'arrivee.

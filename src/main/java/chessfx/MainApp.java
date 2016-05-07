@@ -11,9 +11,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Stack;
 
-import data.ChessColors;
-import data.Move;
-import data.Position;
+import chessClassicData.ChessColors;
+import chessClassicData.Move;
+import chessClassicData.Position;
 
 public class MainApp extends Application {
 

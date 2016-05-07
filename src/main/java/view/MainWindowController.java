@@ -24,14 +24,15 @@ public class MainWindowController {
 		FXMLLoader loader = new FXMLLoader();
 		board = (GridPane) loader.load(getClass().getResourceAsStream(fxmlFile));
 		boardController = loader.getController();
-		
-		//Pane central, on met le board dedans nécessaire pour un redimensionnement propre
+
+		// Pane central, on met le board dedans nécessaire pour un
+		// redimensionnement propre
 		AnchorPane centralPane = new AnchorPane();
 		centralPane.getChildren().add(board);
 		NumberBinding size = Bindings.min(borderPane.heightProperty(), borderPane.widthProperty());
 		board.prefHeightProperty().bind(size);
 		board.prefWidthProperty().bind(size);
-		
+
 		fxmlFile = "/fxml/notationPane.fxml";
 		loader = new FXMLLoader();
 		notationPane = (VBox) loader.load(getClass().getResourceAsStream(fxmlFile));

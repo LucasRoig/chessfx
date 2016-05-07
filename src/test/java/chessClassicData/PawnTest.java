@@ -1,8 +1,12 @@
-package data;
+package chessClassicData;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import chessClassicData.Bitboard;
+import chessClassicData.ChessColors;
+import chessClassicData.Pawn;
 
 public class PawnTest {
 

@@ -1,8 +1,10 @@
-package data;
+package chessClassicData;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import chessClassicData.Util;
 
 public class UtilTest {
 

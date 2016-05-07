@@ -1,4 +1,4 @@
-package data;
+package chessClassicData;
 
 public abstract class Piece {
 	ChessColors color;

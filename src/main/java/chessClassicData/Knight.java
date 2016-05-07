@@ -1,4 +1,4 @@
-package data;
+package chessClassicData;
 
 public class Knight extends Piece {
 	public Knight(ChessColors color) {

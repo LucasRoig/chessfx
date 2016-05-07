@@ -1,7 +1,7 @@
 package view;
 
-import data.ChessColors;
-import data.Position;
+import chessClassicData.ChessColors;
+import chessClassicData.Position;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

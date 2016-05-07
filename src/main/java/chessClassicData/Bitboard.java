@@ -1,4 +1,4 @@
-package data;
+package chessClassicData;
 
 /**
  * Contient la position de chaque piece.
