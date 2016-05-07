@@ -21,10 +21,13 @@ public class Position {
 	int moveCount = 1;
 	ChessColors sideToMove = ChessColors.White;
 	ArrayList<Position> sublines = new ArrayList<Position>();
+	boolean firstPositionOfLine = false;
+	int index; // Index de la position afin de la retrouver.
 
 	static public Position getStartingPosition() {
 		Position p = new Position();
 		p.setBitboard(Bitboard.getStartingBitboar());
+		p.firstPositionOfLine = true;
 		return p;
 	}
 
@@ -40,6 +43,14 @@ public class Position {
 	}
 
 	// ----------Getter Setter-------------------------
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
 
 	public Bitboard getBitboard() {
 		return bitboard;
@@ -265,8 +276,16 @@ public class Position {
 	 * 
 	 * @return
 	 */
-	public boolean isFirstPosition() {
+	public boolean isFirstPositionOfGame() {
 		return this.getPreviousPosition() == null;
+	}
+
+	/**
+	 * Retourne true si cette position est la première d'une ligne ou de la
+	 * partie
+	 */
+	public boolean isFirstPositionOfLine() {
+		return firstPositionOfLine;
 	}
 
 	/**
@@ -298,6 +317,7 @@ public class Position {
 		if (this.getNextPosition() == null) {
 			throw new RuntimeException("Ajout d'une variante alors qu'il n'y a pas de ligne principale.");
 		}
+		p.firstPositionOfLine = true;
 		this.sublines.add(p);
 	}
 

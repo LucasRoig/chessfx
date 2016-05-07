@@ -10,6 +10,7 @@ import javafx.scene.layout.StackPane;
 public class Square extends StackPane {
 	private ImageView square = new ImageView();
 	private ImageView piece = new ImageView();
+	private ImageView border = new ImageView();
 	private int squareIndex;
 	static private NumberBinding size;
 	static private Image whiteSquare = new Image("/images/woodWhite.png");
@@ -26,6 +27,7 @@ public class Square extends StackPane {
 	static private Image rookBlack = new Image("/images/rookBlack.png");
 	static private Image queenBlack = new Image("/images/queenBlack.png");
 	static private Image kingBlack = new Image("/images/kingBlack.png");
+	static private Image borderImg = new Image("/images/border.png");
 
 	static public void setSize(NumberBinding size) {
 		Square.size = size;
@@ -42,6 +44,10 @@ public class Square extends StackPane {
 		piece.fitHeightProperty().bind(size);
 		piece.fitWidthProperty().bind(size);
 		this.getChildren().add(piece);
+
+		border.fitHeightProperty().bind(size);
+		border.fitWidthProperty().bind(size);
+		this.getChildren().add(border);
 	}
 
 	public int getSquareIndex() {
@@ -102,5 +108,13 @@ public class Square extends StackPane {
 
 	public void removePiece() {
 		this.piece.setImage(null);
+	}
+
+	public void showBorder(boolean value) {
+		if (value) {
+			this.border.setImage(borderImg);
+		} else {
+			this.border.setImage(null);
+		}
 	}
 }

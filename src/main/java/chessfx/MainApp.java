@@ -23,13 +23,13 @@ public class MainApp extends Application {
 
 	public void start(Stage stage) throws Exception {
 
-		String fxmlFile = "/fxml/board.fxml";
+		String fxmlFile = "/fxml/mainWindow.fxml";
 		FXMLLoader loader = new FXMLLoader();
 		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
 
-		Scene scene = new Scene(rootNode, 800, 800);
+		Scene scene = new Scene(rootNode, 990, 800);
 
-		stage.setTitle("Hello JavaFX and Maven");
+		stage.setTitle("Chess Fx");
 		stage.setScene(scene);
 		stage.show();
 		// ConsoleInterface();
@@ -103,7 +103,7 @@ public class MainApp extends Application {
 						Position f = p;
 						String str = "";
 						Stack<Position> stack = new Stack<>();
-						while (!f.isFirstPosition()) {
+						while (!f.isFirstPositionOfGame()) {
 							f = f.getPreviousPosition();
 						}
 						for (Position sub : f.getSublines()) {

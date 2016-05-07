@@ -6,11 +6,14 @@ import javafx.beans.binding.Bindings;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 
 public class BoardController {
 	Square[] squareTab = new Square[64];
-	GameModel gameModel = new GameModel();
+	GameModel gameModel;
+	boolean moveOnScroll = true;// True si l'on peut se déplacer dans la partie
+								// en scrollant
 	int from = -1;
 	EventHandler<Event> handleClickOnSquare = new EventHandler<Event>() {
 		public void handle(Event click) {
@@ -38,8 +41,23 @@ public class BoardController {
 			int row = 7 - i / 8;
 			boardPane.add(squareTab[i], col, row);
 		}
+	}
+
+	public void setGameModel(GameModel gameModel) {
+		this.gameModel = gameModel;
 		this.gameModel.getCurrentPosition().addListener((observable, oldValue, newValue) -> {
 			this.updatePosition();
+		});
+		this.boardPane.setOnScroll(new EventHandler<ScrollEvent>() {
+			public void handle(ScrollEvent event) {
+				if (moveOnScroll) {
+					if (event.getDeltaY() > 0) {
+						gameModel.goToPreviousMove();
+					} else {
+						gameModel.goToNextMove();
+					}
+				}
+			}
 		});
 		updatePosition();
 	}
@@ -54,10 +72,13 @@ public class BoardController {
 	private void handleClick(int square) {
 		if (this.from == -1) {
 			this.from = square;
+			this.squareTab[square].showBorder(true);
 		} else if (this.from == square) {
 			this.from = -1;
+			this.squareTab[square].showBorder(false);
 		} else {
 			this.gameModel.userMakesMove(this.from, square);
+			this.squareTab[from].showBorder(false);
 			this.from = -1;
 		}
 	}
