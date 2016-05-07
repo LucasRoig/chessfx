@@ -7,6 +7,13 @@ import java.util.ArrayList;
  * vers la ou les prochaine positions ainsi que vers la position précédente.
  */
 public class Position {
+	private short castleRights = 15;
+	// Droits roque
+	// 0001 - petit roque blanc
+	// 0010 - grand roque blanc
+	// 0100 - petit roque noir
+	// 1000 - grand roque noir
+
 	Bitboard bitboard;
 	Position nextPosition;
 	Position previousPosition;
@@ -73,6 +80,39 @@ public class Position {
 	public ArrayList<Position> getSublines() {
 		return sublines;
 	}
+
+	// --------------Roque-----------------------------
+	private boolean canWhiteShortCastle() {
+		return (this.castleRights & 1) != 0;
+	}
+
+	private boolean canWhiteLongCastle() {
+		return (this.castleRights & 2) != 0;
+	}
+
+	private boolean canBlackShortCastle() {
+		return (this.castleRights & 4) != 0;
+	}
+
+	private boolean canBlackLongCastle() {
+		return (this.castleRights & 8) != 0;
+	}
+
+	private void removeWhiteShortCastle() {
+		this.castleRights &= ~1;
+	}
+
+	private void removeWhiteLongCastle() {
+		this.castleRights &= ~2;
+	}
+
+	private void removeBlackShortCastle() {
+		this.castleRights &= ~4;
+	}
+
+	private void removeBlackLongCastle() {
+		this.castleRights &= ~8;
+	}
 	// --------------Tests sur la position-------------
 
 	/**
@@ -120,6 +160,82 @@ public class Position {
 		// Vérifie que la pièce est de la bonne couleur
 		if (p.color != this.sideToMove) {
 			return false;
+		}
+
+		// Verifie si le joueur veut roquer
+		if (p.pieceType == PieceType.King && m.getFrom() == 4 && p.color == ChessColors.White) {
+			// Le roi est sur sa case de départ et veut bouger
+			if (m.getTo() == 2) {
+				// Blanc grand roque
+				if (!this.canWhiteLongCastle()) {
+					return false;
+				}
+				// Compte les pieces entre d1 et b1
+				if (!(this.bitboard.getPieceAt(1) == null && this.bitboard.getPieceAt(2) == null
+						&& this.bitboard.getPieceAt(3) == null)) {
+					return false;
+				}
+				// Aucune case menacée entre e1 et c1
+				long mask = (long) 7 << 2;
+				if ((mask & this.bitboard.getSquaresAttackedByBlack()) != 0) {
+					return false;
+				}
+				m.setWhiteLongCastle();
+				return true;
+			} else if (m.getTo() == 6) {
+				// Blanc petit roque
+				if (!this.canWhiteShortCastle()) {
+					return false;
+				}
+				// Compte les pieces entre f1 et g1
+				if (!(this.bitboard.getPieceAt(5) == null && this.bitboard.getPieceAt(6) == null)) {
+					return false;
+				}
+				// Aucune case menacée entre e1 et g1
+				long mask = (long) 7 << 4;
+				if ((mask & this.bitboard.getSquaresAttackedByBlack()) != 0) {
+					return false;
+				}
+				m.setWhiteShortCastle();
+				return true;
+			}
+		}
+		if (p.pieceType == PieceType.King && m.getFrom() == 60 && p.color == ChessColors.Black) {
+			if (m.getTo() == 58) {
+				// Noir grand roque
+				if (!this.canBlackLongCastle()) {
+					return false;
+				}
+				// Compte les pieces entre d8 et b8
+				if (!(this.bitboard.getPieceAt(57) == null && this.bitboard.getPieceAt(58) == null
+						&& this.bitboard.getPieceAt(59) == null)) {
+					return false;
+				}
+				// Aucune case menacée entre e8 et c8
+				long mask = (long) 7 << 58;
+				if ((mask & this.bitboard.getSquaresAttackedByWhite()) != 0) {
+					return false;
+				}
+				m.setBlackLongCastle();
+				return true;
+			}
+			if (m.getTo() == 62) {
+				// Noir petit roque
+				if (!this.canBlackShortCastle()) {
+					return false;
+				}
+				// Compte les pieces entre f8 et g8
+				if (!(this.bitboard.getPieceAt(61) == null && this.bitboard.getPieceAt(62) == null)) {
+					return false;
+				}
+				// Aucune case menacée entre e8 et c8
+				long mask = (long) 7 << 60;
+				if ((mask & this.bitboard.getSquaresAttackedByWhite()) != 0) {
+					return false;
+				}
+				m.setBlackShortCastle();
+				return true;
+			}
 		}
 		// Vérifie que la pièce peut se déplacer sur la case d'arrivée
 		long possibleMoves = p.possibleMoves(m.getFrom(), this.bitboard);
@@ -195,21 +311,52 @@ public class Position {
 		Position position = new Position();
 
 		position.setPreviousPosition(this);
-
-		// Manipulation des pièces
-		position.setBitboard(this.getBitboard().copy());
-		Piece pieceMoving = position.getBitboard().getPieceAt(move.getFrom());
-		position.getBitboard().removeAt(move.getFrom());
-		position.getBitboard().setPieceAt(pieceMoving, move.getTo());
-
-		// Génere San
-		String san = pieceMoving.getLetter();
-		san += move.toString();
-		position.lastMove = san;
-
 		// Compte des coups et changement du camp au trait
 		position.sideToMove = this.sideToMove == ChessColors.White ? ChessColors.Black : ChessColors.White;
 		position.moveCount = position.sideToMove == ChessColors.White ? (this.moveCount + 1) : this.moveCount;
+
+		// Manipulation des pièces
+		position.setBitboard(this.getBitboard().copy());
+		if (move.isWhiteShortCastle()) {
+			position.getBitboard().removeAt(4);
+			position.getBitboard().removeAt(7);
+			position.getBitboard().setPieceAt(new King(ChessColors.White), 6);
+			position.getBitboard().setPieceAt(new Rook(ChessColors.White), 5);
+			position.lastMove = "0-0";
+			position.removeWhiteLongCastle();
+			position.removeWhiteShortCastle();
+			return position;
+		} else if (move.isWhiteLongCastle()) {
+			position.getBitboard().removeAt(4);
+			position.getBitboard().removeAt(0);
+			position.getBitboard().setPieceAt(new King(ChessColors.White), 2);
+			position.getBitboard().setPieceAt(new Rook(ChessColors.White), 3);
+			position.lastMove = "0-0-0";
+			position.removeWhiteLongCastle();
+			position.removeWhiteShortCastle();
+			return position;
+		} else if (move.isBlackShortCastle()) {
+			position.getBitboard().removeAt(60);
+			position.getBitboard().removeAt(63);
+			position.getBitboard().setPieceAt(new King(ChessColors.Black), 62);
+			position.getBitboard().setPieceAt(new Rook(ChessColors.Black), 61);
+			position.lastMove = "0-0";
+			position.removeBlackLongCastle();
+			position.removeBlackShortCastle();
+			return position;
+		} else if (move.isBlackLongCastle()) {
+			position.getBitboard().removeAt(60);
+			position.getBitboard().removeAt(56);
+			position.getBitboard().setPieceAt(new King(ChessColors.Black), 58);
+			position.getBitboard().setPieceAt(new Rook(ChessColors.Black), 59);
+			position.lastMove = "0-0-0";
+			position.removeBlackLongCastle();
+			position.removeBlackShortCastle();
+			return position;
+		}
+		Piece pieceMoving = position.getBitboard().getPieceAt(move.getFrom());
+		position.getBitboard().removeAt(move.getFrom());
+		position.getBitboard().setPieceAt(pieceMoving, move.getTo());
 
 		// Pion avance de deux cases
 		if (pieceMoving.pieceType == PieceType.Pawn && Math.abs(move.getFrom() - move.getTo()) == 16) {
@@ -235,6 +382,56 @@ public class Position {
 				}
 			}
 		}
+
+		// Roque
+		position.castleRights = this.castleRights;
+		switch ((int) move.getFrom()) {
+		// Gère les déplacements des rois et des tours
+		case 0:
+			position.removeWhiteLongCastle();
+			break;
+		case 4:
+			position.removeWhiteShortCastle();
+			position.removeWhiteLongCastle();
+			break;
+		case 7:
+			position.removeWhiteShortCastle();
+			break;
+		case 56:
+			position.removeBlackLongCastle();
+			break;
+		case 60:
+			position.removeBlackLongCastle();
+			position.removeBlackShortCastle();
+			break;
+		case 63:
+			position.removeBlackShortCastle();
+			break;
+		default:
+			break;
+		}
+		switch ((int) move.getTo()) {
+		// Gère la prise des tours
+		case 0:
+			position.removeWhiteLongCastle();
+			break;
+		case 7:
+			position.removeWhiteShortCastle();
+			break;
+		case 56:
+			position.removeBlackLongCastle();
+			break;
+		case 63:
+			position.removeBlackShortCastle();
+			break;
+		default:
+			break;
+		}
+
+		// Génere San
+		String san = pieceMoving.getLetter();
+		san += move.toString();
+		position.lastMove = san;
 
 		return position;
 	}
