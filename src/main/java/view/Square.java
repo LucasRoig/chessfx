@@ -1,17 +1,19 @@
 package view;
 
 import data.ChessColors;
+import data.Piece;
 import javafx.beans.binding.NumberBinding;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
 public class Square extends StackPane {
-	public ImageView square = new ImageView();
+	private ImageView square = new ImageView();
 	private ImageView piece = new ImageView();
+	private int squareIndex;
 	static private NumberBinding size;
-	static private Image whiteSquare = new Image("/images/whiteSquare.png");
-	static private Image blackSquare = new Image("/images/blackSquare.png");
+	static private Image whiteSquare = new Image("/images/woodWhite.png");
+	static private Image blackSquare = new Image("/images/woodBlack.png");
 	static private Image pawnWhite = new Image("/images/pawnWhite.png");
 	static private Image knightWhite = new Image("/images/knightWhite.png");
 	static private Image bishopWhite = new Image("/images/bishopWhite.png");
@@ -29,13 +31,76 @@ public class Square extends StackPane {
 		Square.size = size;
 	}
 
-	public Square(ChessColors color) {
-		if (size == null) {
-			throw new RuntimeException("Utiliser la methode setSize() avant d'instancier une case");
-		}
+	public Square(ChessColors color, int squareIndex) {
+		// On doit avoir utilisé setSize avant d'instancier une case
+		this.squareIndex = squareIndex;
 		square.setImage(color == ChessColors.White ? Square.whiteSquare : Square.blackSquare);
 		square.fitHeightProperty().bind(size);
 		square.fitWidthProperty().bind(size);
 		this.getChildren().add(square);
+
+		piece.fitHeightProperty().bind(size);
+		piece.fitWidthProperty().bind(size);
+		this.getChildren().add(piece);
+	}
+
+	public int getSquareIndex() {
+		return squareIndex;
+	}
+
+	public void setPiece(Piece p) {
+		if (p == null) {
+			this.piece.setImage(null);
+		} else if (p.getColor() == ChessColors.White) {
+			switch (p.getPieceType()) {
+			case Pawn:
+				this.piece.setImage(pawnWhite);
+				break;
+			case Knight:
+				this.piece.setImage(knightWhite);
+				break;
+			case Bishop:
+				this.piece.setImage(bishopWhite);
+				break;
+			case Rook:
+				this.piece.setImage(rookWhite);
+				break;
+			case Queen:
+				this.piece.setImage(queenWhite);
+				break;
+			case King:
+				this.piece.setImage(kingWhite);
+				break;
+			default:
+				break;
+			}
+		} else {
+			switch (p.getPieceType()) {
+			case Pawn:
+				this.piece.setImage(pawnBlack);
+				break;
+			case Knight:
+				this.piece.setImage(knightBlack);
+				break;
+			case Bishop:
+				this.piece.setImage(bishopBlack);
+				break;
+			case Rook:
+				this.piece.setImage(rookBlack);
+				break;
+			case Queen:
+				this.piece.setImage(queenBlack);
+				break;
+			case King:
+				this.piece.setImage(kingBlack);
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	public void removePiece() {
+		this.piece.setImage(null);
 	}
 }

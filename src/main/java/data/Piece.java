@@ -6,6 +6,14 @@ public abstract class Piece {
 
 	public abstract String toString();
 
+	public ChessColors getColor() {
+		return color;
+	}
+
+	public PieceType getPieceType() {
+		return pieceType;
+	}
+
 	public long possibleMoves(long square, Bitboard bitboard) {
 		long squareVector = (long) 1 << square;
 		long attackedSquares = this.attacks(squareVector, bitboard);

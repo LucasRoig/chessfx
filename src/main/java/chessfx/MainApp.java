@@ -27,7 +27,7 @@ public class MainApp extends Application {
 		FXMLLoader loader = new FXMLLoader();
 		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
 
-		Scene scene = new Scene(rootNode, 600, 600);
+		Scene scene = new Scene(rootNode, 800, 800);
 
 		stage.setTitle("Hello JavaFX and Maven");
 		stage.setScene(scene);
