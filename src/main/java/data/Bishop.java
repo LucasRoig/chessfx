@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Bishop extends Piece {
 	public Bishop(ChessColors color) {
 		this.color = color;
+		this.pieceType = PieceType.Bishop;
 	}
 
 	@Override

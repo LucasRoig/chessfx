@@ -2,6 +2,7 @@ package data;
 
 public abstract class Piece {
 	ChessColors color;
+	PieceType pieceType;
 
 	public abstract String toString();
 

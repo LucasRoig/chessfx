@@ -15,6 +15,8 @@ public class Bitboard {
 	public long rooks; // Présence des tours
 	public long queens;// présence des dames
 	public long kings; // présence des rois
+	private long epSquare; // Vecteur contenant un 1 si une prise en passant est
+							// possible sur une case
 
 	// ---------Methodes Statiques-------------
 
@@ -32,7 +34,6 @@ public class Bitboard {
 			bitboard.rooks = Long.parseUnsignedLong("9295429630892703873");
 			bitboard.queens = Long.parseUnsignedLong("576460752303423496");
 			bitboard.kings = Long.parseUnsignedLong("1152921504606846992");
-			System.out.println(Long.toBinaryString((long) 1 << 63));
 			Bitboard.startingBitboard = bitboard;
 		}
 		return Bitboard.startingBitboard;
@@ -86,6 +87,14 @@ public class Bitboard {
 			}
 		}
 		return str;
+	}
+
+	public void setEpSquare(long square) {
+		this.epSquare = (long) 1 << square;
+	}
+
+	public long getEpSquare() {
+		return epSquare;
 	}
 
 	// ---------Methodes pour les pieces--------

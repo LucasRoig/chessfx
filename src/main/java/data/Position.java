@@ -211,6 +211,31 @@ public class Position {
 		position.sideToMove = this.sideToMove == ChessColors.White ? ChessColors.Black : ChessColors.White;
 		position.moveCount = position.sideToMove == ChessColors.White ? (this.moveCount + 1) : this.moveCount;
 
+		// Pion avance de deux cases
+		if (pieceMoving.pieceType == PieceType.Pawn && Math.abs(move.getFrom() - move.getTo()) == 16) {
+			// Un pion avance de deux cases.
+			if (pieceMoving.color == ChessColors.White) {
+				position.bitboard.setEpSquare(move.getFrom() + 8);
+			} else {
+				position.bitboard.setEpSquare(move.getFrom() - 8);
+			}
+		}
+
+		// Prise en passant
+		if (pieceMoving.pieceType == PieceType.Pawn
+				&& (Math.abs(move.getFrom() - move.getTo()) == 7 || Math.abs(move.getFrom() - move.getTo()) == 9)) {
+			// Detection de la prise par un pion
+			if (this.bitboard.getPieceAt(move.getTo()) == null) {
+				// Si la case d'arrivée est vide on a une prise en passant.
+				// On doit enlever la piece qui a été prise.
+				if (pieceMoving.color == ChessColors.White) {
+					position.bitboard.removeAt(move.getTo() - 8);
+				} else {
+					position.bitboard.removeAt(move.getTo() + 8);
+				}
+			}
+		}
+
 		return position;
 	}
 

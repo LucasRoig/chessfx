@@ -53,34 +53,41 @@ public class MainApp extends Application {
 		while (!quit) {
 			try {
 				String s = br.readLine();
+				// Lecture d'un coup
 				if (s.length() == 5 && s.charAt(2) == '-') {
 					Move m = Move.parseFromString(s);
-					Position newPosition = p.getPositionAfterMove(m);
+					if (p.isMoveLegal(m)) {
+						// Le coup est légal
+						Position newPosition = p.getPositionAfterMove(m);
 
-					if (p.isLastPositon()) {
-						p.setNextPosition(newPosition);
-						p = p.getNextPosition();
-					} else if (p.getNextPosition().equals(newPosition)) {
-						p = p.getNextPosition();
-					} else if (p.getSublines().isEmpty()) {
-						p.addSubLine(newPosition);
-						p = newPosition;
-					} else {
-						boolean trouve = false;
-						for (Position pos : p.getSublines()) {
-							if (pos.equals(newPosition)) {
-								p = pos;
-								trouve = true;
-								break;
-							}
-						}
-						if (!trouve) {
+						if (p.isLastPositon()) {
+							p.setNextPosition(newPosition);
+							p = p.getNextPosition();
+						} else if (p.getNextPosition().equals(newPosition)) {
+							p = p.getNextPosition();
+						} else if (p.getSublines().isEmpty()) {
 							p.addSubLine(newPosition);
 							p = newPosition;
+						} else {
+							boolean trouve = false;
+							for (Position pos : p.getSublines()) {
+								if (pos.equals(newPosition)) {
+									p = pos;
+									trouve = true;
+									break;
+								}
+							}
+							if (!trouve) {
+								p.addSubLine(newPosition);
+								p = newPosition;
+							}
 						}
+						System.out.println(p.toString());
+					} else {
+						System.out.println("Le coup entré n'est pas légal");
 					}
 
-					System.out.println(p.toString());
+					// Lecture d'une commande
 				} else {
 					switch (s) {
 					case "quit":

@@ -4,6 +4,7 @@ public class Pawn extends Piece {
 
 	public Pawn(ChessColors color) {
 		this.color = color;
+		this.pieceType = PieceType.Pawn;
 	}
 
 	@Override
@@ -17,7 +18,7 @@ public class Pawn extends Piece {
 		long squareVector = (long) 1 << square;
 		long attackedSquares = this.attacks(squareVector, bitboard);
 		if (this.color == ChessColors.White) {
-			moves = attackedSquares & bitboard.black;
+			moves = attackedSquares & (bitboard.black | bitboard.getEpSquare());
 			moves |= Util.northOne(squareVector);
 			// est sur la deuxieme rangée
 			if ((squareVector & (~Util.not2row)) != 0) {
@@ -26,7 +27,7 @@ public class Pawn extends Piece {
 			}
 			moves ^= bitboard.white;
 		} else {
-			moves = attackedSquares & bitboard.white;
+			moves = attackedSquares & (bitboard.white | bitboard.getEpSquare());
 			moves |= Util.southOne(squareVector);
 			// est sur la 7eme rangée
 			if ((squareVector & (~Util.not7row)) != 0) {

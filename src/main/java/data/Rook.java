@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Rook extends Piece {
 	public Rook(ChessColors color) {
 		this.color = color;
+		this.pieceType = PieceType.Rook;
 	}
 
 	@Override

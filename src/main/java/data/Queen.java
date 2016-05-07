@@ -3,6 +3,7 @@ package data;
 public class Queen extends Piece {
 	public Queen(ChessColors color) {
 		this.color = color;
+		this.pieceType = PieceType.Queen;
 	}
 
 	@Override
