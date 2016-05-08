@@ -227,4 +227,13 @@ public class Util {
 		}
 		return (c[0] - 97) + 8 * (Long.parseLong(str.substring(1)) - 1);
 	}
+	
+	/**
+	 * Retourne la lettre associée à la colonne de la case passée en paramètre
+	 * @param square
+	 * @return
+	 */
+	static public String getFileLetter(long square){
+		return String.valueOf((char)((square % 8) + 97));
+	}
 }

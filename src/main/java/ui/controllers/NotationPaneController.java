@@ -1,12 +1,19 @@
-package view;
+package ui.controllers;
 
 import chessClassicData.ChessColors;
 import chessClassicData.Position;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.paint.Color;
+import ui.MoveLabel;
+import ui.model.GameModel;
 
 /**
  * Le notation pane affiche les informations sur la partie ainsi que les coups

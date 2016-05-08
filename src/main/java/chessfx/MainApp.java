@@ -27,8 +27,8 @@ public class MainApp extends Application {
 		FXMLLoader loader = new FXMLLoader();
 		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
 
-		Scene scene = new Scene(rootNode, 990, 800);
-
+		Scene scene = new Scene(rootNode, 1050, 750);
+		scene.getStylesheets().add("/styles/css.css");
 		stage.setTitle("Chess Fx");
 		stage.setScene(scene);
 		stage.show();

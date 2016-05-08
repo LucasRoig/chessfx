@@ -1,4 +1,4 @@
-package view;
+package ui.controllers;
 
 import chessClassicData.ChessColors;
 import chessClassicData.Piece;
@@ -8,6 +8,8 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
+import ui.Square;
+import ui.model.GameModel;
 
 public class BoardController {
 	Square[] squareTab = new Square[64];

@@ -1,4 +1,4 @@
-package view;
+package ui.model;
 
 import chessClassicData.Game;
 import chessClassicData.Move;
@@ -18,9 +18,8 @@ public class GameModel {
 	private Game game;
 
 	public GameModel() {
-		this.game = new Game();
-		this.game.addPosition(Position.getStartingPosition());
-		currentPosition.set(this.game.getPosition(0));
+		this.game = Game.getStartingGame();
+		this.getCurrentPosition().set(this.game.getPosition(0));
 	}
 
 	public ObjectProperty<Position> getCurrentPosition() {
@@ -52,31 +51,8 @@ public class GameModel {
 		Position cPos = currentPosition.get();
 		if (cPos.isMoveLegal(m)) {
 			Position newPosition = cPos.getPositionAfterMove(m);
-			if (cPos.isLastPositon()) {
-				cPos.setNextPosition(newPosition);
-				currentPosition.set(cPos.getNextPosition());
-				this.game.addPosition(newPosition);
-			} else if (cPos.getNextPosition().equals(newPosition)) {
-				this.goToNextMove();
-			} else if (cPos.getSublines().isEmpty()) {
-				cPos.addSubLine(newPosition);
-				currentPosition.set(newPosition);
-				this.game.addPosition(newPosition);
-			} else {
-				boolean trouve = false;
-				for (Position pos : cPos.getSublines()) {
-					if (pos.equals(newPosition)) {
-						currentPosition.set(newPosition);
-						trouve = true;
-						break;
-					}
-				}
-				if (!trouve) {
-					cPos.addSubLine(newPosition);
-					currentPosition.set(newPosition);
-					this.game.addPosition(newPosition);
-				}
-			}
+			int newIndex = this.game.addPositionAfter(newPosition, this.getCurrentPosition().get().getIndex());
+			this.getCurrentPosition().set(this.game.getPosition(newIndex));
 		}
 	}
 

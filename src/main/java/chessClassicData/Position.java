@@ -387,7 +387,7 @@ public class Position {
 				position.bitboard.setEpSquare(move.getFrom() - 8);
 			}
 		}
-
+		boolean take = false; //Détection de la prise afin de donner le bon san
 		// Prise en passant
 		if (pieceMoving.pieceType == PieceType.Pawn
 				&& (Math.abs(move.getFrom() - move.getTo()) == 7 || Math.abs(move.getFrom() - move.getTo()) == 9)) {
@@ -400,9 +400,14 @@ public class Position {
 				} else {
 					position.bitboard.removeAt(move.getTo() + 8);
 				}
+				take = true;
 			}
 		}
-
+		
+		//Détection de la prise
+		if (this.bitboard.getPieceAt(move.getTo()) != null){
+			take = true;
+		}
 		// Roque
 		position.castleRights = this.castleRights;
 		switch ((int) move.getFrom()) {
@@ -450,6 +455,12 @@ public class Position {
 
 		// Génere San
 		String san = pieceMoving.getLetter();
+		if(take){
+			if(pieceMoving.getPieceType() == PieceType.Pawn){
+				san += Util.getFileLetter(move.getFrom());
+			}
+			san += "x";
+		}
 		san += move.toString();
 		position.lastMove = san;
 
