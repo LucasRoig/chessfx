@@ -1,4 +1,4 @@
-package ui;
+package chessfx.ui;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

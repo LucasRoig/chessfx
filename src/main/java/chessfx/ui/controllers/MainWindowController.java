@@ -1,5 +1,10 @@
-package ui.controllers;
+package chessfx.ui.controllers;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import chessfx.core.game.IGame;
+import chessfx.ui.model.GameSelectionModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
@@ -8,12 +13,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import ui.model.GameModel;
 
 public class MainWindowController {
 	@FXML
 	BorderPane borderPane; // Parent
-	GameModel gameModel = new GameModel();
+	GameSelectionModel gameModel;
 	GridPane board;
 	BoardController boardController;
 	VBox notationPane;
@@ -21,6 +25,8 @@ public class MainWindowController {
 
 	@FXML
 	public void initialize() throws Exception {
+		ApplicationContext ap = new ClassPathXmlApplicationContext("beans.xml");
+		this.gameModel = new GameSelectionModel((IGame) ap.getBean("game"));
 		String fxmlFile = "/fxml/board.fxml";
 		FXMLLoader loader = new FXMLLoader();
 		board = (GridPane) loader.load(getClass().getResourceAsStream(fxmlFile));

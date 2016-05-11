@@ -174,6 +174,7 @@ public class Bitboard implements IBoard{
 	 */
 	public void setPieceAt(Square square, Piece piece) {
 		long vector = (long) 1 << square.ordinal();
+		this.removePieceAt(square);
 		switch (piece.getPieceType()) {
 		case Pawn:
 			this.pawns |= vector;

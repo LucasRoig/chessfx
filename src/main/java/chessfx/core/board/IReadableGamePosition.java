@@ -2,10 +2,18 @@ package chessfx.core.board;
 
 import java.util.List;
 
+import chessfx.core.InvalidPieceException;
 import chessfx.core.Move;
 
 
 public interface IReadableGamePosition extends IPosition{
+	
+	/**
+	 * Retourne une nouvelle position qui résulte du coup m
+	 * @param m le coup dont on désire obtenir la position résultante
+	 * @return
+	 */
+	public IWritableGamePosition getPositionAfter(Move m) throws InvalidPieceException;
 
 	public int getId();
 	

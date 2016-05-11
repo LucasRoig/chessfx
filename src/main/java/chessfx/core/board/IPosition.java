@@ -2,18 +2,9 @@ package chessfx.core.board;
 
 import java.util.List;
 
-import chessfx.core.InvalidPieceException;
-import chessfx.core.Move;
 import chessfx.core.Square;
 
 public interface IPosition extends IReadableBoard{
-
-	/**
-	 * Retourne une nouvelle position qui résulte du coup m
-	 * @param m le coup dont on désire obtenir la position résultante
-	 * @return
-	 */
-	public IPosition getPositionAfter(Move m) throws InvalidPieceException;
 	
 	/**
 	 * Retourne la liste des cases que la pièce située sur la case s peut

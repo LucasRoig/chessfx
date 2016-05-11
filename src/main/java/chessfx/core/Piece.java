@@ -18,6 +18,9 @@ public class Piece {
 	}
 	
 	public boolean equals(Piece p){
+		if (p == null){
+			return false;
+		}
 		return (this.getColor() == p.getColor()) && (this.getPieceType() == p.getPieceType());
 	}
 }

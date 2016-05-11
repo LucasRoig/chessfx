@@ -1,5 +1,6 @@
 package chessfx.core;
 
+import chessClassicData.KingTest;
 import chessfx.core.Piece;
 
 public class Move {
@@ -42,9 +43,61 @@ public class Move {
 	int data = 0;
 	
 	public Move(Square from, Square to,Piece piece){
-		
+		this.setFrom(from);
+		this.setTo(to);
+		this.setPiece(piece);
+		this.setSide(piece.getColor());
+		//Roque
+		if (this.getPiece().getPieceType() == PieceType.King && this.getFrom() == Square.E1 &&  this.getPiece().getColor() == ChessColors.White){
+			if(this.getTo() == Square.G1)
+				this.setShortCastle(true);
+			else if (this.getTo() == Square.C1)
+				this.setLongCastle(true);
+		}
+		else if (this.getPiece().getPieceType() == PieceType.King && this.getFrom() == Square.E8 &&  this.getPiece().getColor() == ChessColors.Black){
+			if(this.getTo() == Square.G8)
+				this.setShortCastle(true);
+			else if (this.getTo() == Square.C8)
+				this.setLongCastle(true);
+		}		
 	}
 	
+	public String toString(){
+
+		if (this.isLongCastle())
+			return "O-O-O";
+		if (this.isShortCastle())
+			return "O-O";
+		
+		String s = "";
+		switch (this.getPiece().getPieceType()) {
+		case Pawn:
+			if(this.isCapture())
+				s += this.getFrom().columnLetter();
+			break;
+		case Knight:
+			s += "N";
+			break;
+		case Bishop:
+			s += "B";
+			break;
+		case Rook:
+			s += "R";
+			break;
+		case Queen:
+			s += "Q";
+			break;
+		case King:
+			s += "K";
+			break;
+		default:
+			break;
+		}
+		if(this.isCapture()){
+			s += "x";
+		}
+		return s + this.getTo().toString();
+	}
 	public void setFrom(Square from){
 		this.data &= ~fromMask;
 		this.data |= from.ordinal() << fromShift;
@@ -69,7 +122,7 @@ public class Move {
 		this.data |= p.getPieceType().ordinal() << pieceTypeShift;
 	}
 	
-	public Piece getPiece(Piece p){
+	public Piece getPiece(){
 		ChessColors color = this.getSide();
 		PieceType type = PieceType.values()[(this.data & pieceTypeMask) >>> pieceTypeShift];
 		return new Piece(color, type);
@@ -140,7 +193,7 @@ public class Move {
 		}
 	}
 	
-	public boolean getCapture(){
+	public boolean isCapture(){
 		return ((this.data & capturesMask) >>> capturesShifht) == 1;
 	}
 }

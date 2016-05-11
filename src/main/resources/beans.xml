@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="board" class="chessfx.core.board.Bitboard">
+	</bean>
+	
+	<bean id="position" class="chessfx.core.board.Position">
+		<constructor-arg ref="board" />
+	</bean>
+	
+	<bean id="gameMoves" class="chessfx.core.game.GameMoves">
+		<constructor-arg ref="position" />
+	</bean>
+	
+	<bean id="game" class="chessfx.core.game.Game">
+		<constructor-arg ref="gameMoves" />
+	</bean>
+	
+	<bean id="gameSelectionModel" class="chessfx.ui.model.GameSelectionModel">
+		<constructor-arg ref="game" />
+	</bean>
+</beans>

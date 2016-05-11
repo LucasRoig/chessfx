@@ -1,13 +1,13 @@
-package ui;
+package chessfx.ui;
 
-import chessClassicData.ChessColors;
-import chessClassicData.Piece;
+import chessfx.core.ChessColors;
+import chessfx.core.Piece;
 import javafx.beans.binding.NumberBinding;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
-public class Square extends StackPane {
+public class SquareComponent extends StackPane {
 	private ImageView square = new ImageView();
 	private ImageView piece = new ImageView();
 	private ImageView border = new ImageView();
@@ -30,13 +30,13 @@ public class Square extends StackPane {
 	static private Image borderImg = new Image("/images/border.png");
 
 	static public void setSize(NumberBinding size) {
-		Square.size = size;
+		SquareComponent.size = size;
 	}
 
-	public Square(ChessColors color, int squareIndex) {
+	public SquareComponent(ChessColors color, int squareIndex) {
 		// On doit avoir utilisé setSize avant d'instancier une case
 		this.squareIndex = squareIndex;
-		square.setImage(color == ChessColors.White ? Square.whiteSquare : Square.blackSquare);
+		square.setImage(color == ChessColors.White ? SquareComponent.whiteSquare : SquareComponent.blackSquare);
 		square.fitHeightProperty().bind(size);
 		square.fitWidthProperty().bind(size);
 		this.getChildren().add(square);

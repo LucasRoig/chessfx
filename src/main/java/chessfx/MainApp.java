@@ -6,15 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Stack;
-
-import chessClassicData.ChessColors;
-import chessClassicData.Move;
-import chessfx.core.board.Position;
-
 public class MainApp extends Application {
 
 	public static void main(String[] args) throws Exception {
@@ -35,6 +26,7 @@ public class MainApp extends Application {
 		// ConsoleInterface();
 	}
 
+	/*
 	public static void ConsoleInterface() {
 		Position p = Position.getStartingPosition();
 		System.out.println(p.toString());
@@ -149,5 +141,5 @@ public class MainApp extends Application {
 				e.printStackTrace();
 			}
 		}
-	}
+	}*/
 }

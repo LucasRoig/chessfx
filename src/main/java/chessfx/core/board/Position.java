@@ -33,12 +33,10 @@ public class Position implements IWritableGamePosition{
 	int index; // Index de la position afin de la retrouver.
 
 	//================Constructeurs et autres===========
-	/**
-	 * Crée une position vide a partir d'un IBoard;
-	 */
+	
 	public Position(IBoard board) {
 		this.board = board;
-		this.sublines = new ArrayList<>();
+		this.setStarting();
 	}
 
 	/**
@@ -193,10 +191,10 @@ public class Position implements IWritableGamePosition{
 					res.add(Square.C1);
 				}
 			}else{
-				if(canWhiteShortCastle()){
+				if(canBlackShortCastle()){
 					res.add(Square.G8);
 				}
-				if(canWhiteLongCastle()){
+				if(canBlackLongCastle()){
 					res.add(Square.C8);
 				}
 			}
@@ -210,9 +208,9 @@ public class Position implements IWritableGamePosition{
 	public boolean isLegal() {
 		// Vérifie que le camp n'étant pas au trait n'est pas en échec
 		if(this.sideToMove == ChessColors.White){
-			return this.board.isBlackKingInCheck();
+			return !this.board.isBlackKingInCheck();
 		}else{
-			return this.board.isWhiteKingInCheck();
+			return !this.board.isWhiteKingInCheck();
 		}
 	}
 
@@ -346,7 +344,8 @@ public class Position implements IWritableGamePosition{
 	 */
 	public boolean equals(IReadableBoard p) {
 		for (Square s : Square.values()) {
-			if(!this.getPieceAt(s).equals(p.getPieceAt(s))){
+			Piece piece = this.getPieceAt(s);
+			if(piece != null && !piece.equals(p.getPieceAt(s))){
 				return false;
 			}
 		}
@@ -387,6 +386,7 @@ public class Position implements IWritableGamePosition{
 			return this.getPositionAfterCastle(move);
 		}
 		Position position = new Position(this.board.copy());
+		position.board = this.board.copy();
 		position.setPreviousPosition(this);
 		// Compte des coups et changement du camp au trait
 		position.sideToMove = this.sideToMove == ChessColors.White ? ChessColors.Black : ChessColors.White;
@@ -449,6 +449,7 @@ public class Position implements IWritableGamePosition{
 	
 	private Position getPositionAfterCastle(Move m) throws InvalidPieceException{
 		Position position = new Position(this.board.copy());
+		position.board = this.board.copy();
 		position.setPreviousPosition(this);
 		// Compte des coups et changement du camp au trait
 		position.sideToMove = this.sideToMove == ChessColors.White ? ChessColors.Black : ChessColors.White;
