@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import chessClassicData.Util;
+import chessfx.core.Util;
 
 public class UtilTest {
 

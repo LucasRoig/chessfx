@@ -5,8 +5,8 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import chessClassicData.Bishop;
-import chessClassicData.Bitboard;
 import chessClassicData.ChessColors;
+import chessfx.core.board.Bitboard;
 
 public class BishopTest {
 

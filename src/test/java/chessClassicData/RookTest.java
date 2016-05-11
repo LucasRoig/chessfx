@@ -4,9 +4,9 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import chessClassicData.Bitboard;
 import chessClassicData.ChessColors;
 import chessClassicData.Rook;
+import chessfx.core.board.Bitboard;
 
 public class RookTest {
 

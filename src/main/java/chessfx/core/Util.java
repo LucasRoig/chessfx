@@ -1,20 +1,38 @@
-package chessClassicData;
+package chessfx.core;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Util {
+    
+	public static final long notAFile = Long.parseUnsignedLong("fefefefefefefefe", 16);
+	public static final long notBFile = Long.parseUnsignedLong("fdfdfdfdfdfdfdfd", 16);
+	public static final long notGFile = Long.parseUnsignedLong("bfbfbfbfbfbfbfbf", 16);
+	public static final long notHFile = Long.parseUnsignedLong("7f7f7f7f7f7f7f7f", 16);
+	public static final long not1row = Long.parseUnsignedLong("ffffffffffffff00", 16);
+	public static final long not2row = Long.parseUnsignedLong("ffffffffffff00ff", 16);
+	public static final long not7row = Long.parseUnsignedLong("ff00ffffffffffff", 16);
+	public static final long not8row = Long.parseUnsignedLong("00ffffffffffffff", 16);
+	public static final long Afile = ~notAFile;
+	public static final long Hfile = ~notHFile;
+	public static final long row1 = ~not1row;
+	public static final long row8 = ~not8row;
 
-	static long notAFile = Long.parseUnsignedLong("fefefefefefefefe", 16);
-	static long notBFile = Long.parseUnsignedLong("fdfdfdfdfdfdfdfd", 16);
-	static long notGFile = Long.parseUnsignedLong("bfbfbfbfbfbfbfbf", 16);
-	static long notHFile = Long.parseUnsignedLong("7f7f7f7f7f7f7f7f", 16);
-	static long not1row = Long.parseUnsignedLong("ffffffffffffff00", 16);
-	static long not2row = Long.parseUnsignedLong("ffffffffffff00ff", 16);
-	static long not7row = Long.parseUnsignedLong("ff00ffffffffffff", 16);
-	static long not8row = Long.parseUnsignedLong("00ffffffffffffff", 16);
-	static long Afile = ~notAFile;
-	static long Hfile = ~notHFile;
-	static long row1 = ~not1row;
-	static long row8 = ~not8row;
-
+	/**
+	 * Transforme un vecteur en liste de cases
+	 * @param vector
+	 * @return
+	 */
+	static public List<Square> vectorToSquareList(final long vector){
+		long copy = vector;
+		ArrayList<Square> res = new ArrayList<>();
+		while(copy != 0){
+			int lsb = (int) Util.lessSignificantBit(copy);
+			res.add(Square.values()[lsb]);
+			copy &= ~((long) 1 << lsb); 
+		}
+		return res;
+	}
 	// Utilisé pour less significant bit
 	static int[] index64Less = { 0, 1, 48, 2, 57, 49, 28, 3, 61, 58, 50, 42, 38, 29, 17, 4, 62, 55, 59, 36, 53, 51, 43,
 			22, 45, 39, 33, 30, 24, 18, 12, 5, 63, 47, 56, 27, 60, 41, 37, 16, 54, 35, 52, 21, 44, 32, 23, 11, 46, 26,
@@ -52,7 +70,7 @@ public class Util {
 	 * @precondition bb != 0
 	 * @return index (0..63) of most significant one bit
 	 */
-	static long mostSignificantBit(long bb) {
+	public static long mostSignificantBit(long bb) {
 		if (bb == 0) {
 			throw new RuntimeException("Pas de bit à 1");
 		}

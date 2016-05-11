@@ -1,7 +1,7 @@
 package ui.controllers;
 
 import chessClassicData.ChessColors;
-import chessClassicData.Position;
+import chessfx.core.board.Position;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

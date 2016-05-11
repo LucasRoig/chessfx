@@ -1,9 +1,10 @@
 package ui.model;
 
 import chessClassicData.Game;
+import chessClassicData.IllegalMoveException;
 import chessClassicData.Move;
 import chessClassicData.Piece;
-import chessClassicData.Position;
+import chessfx.core.board.Position;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -47,13 +48,18 @@ public class GameModel {
 	}
 
 	public void userMakesMove(int from, int to) {
-		Move m = new Move(from, to);
-		Position cPos = currentPosition.get();
-		if (cPos.isMoveLegal(m)) {
-			Position newPosition = cPos.getPositionAfterMove(m);
-			int newIndex = this.game.addPositionAfter(newPosition, this.getCurrentPosition().get().getIndex());
-			this.getCurrentPosition().set(this.game.getPosition(newIndex));
+		Move m;
+		try {
+			m = new Move(from, to,this.getCurrentPosition().get());
+			Position cPos = currentPosition.get();
+			if (cPos.isMoveLegal(m)) {
+				Position newPosition = cPos.getPositionAfterMove(m);
+				int newIndex = this.game.addPositionAfter(newPosition, this.getCurrentPosition().get().getIndex());
+				this.getCurrentPosition().set(this.game.getPosition(newIndex));
+			}
+		} catch (IllegalMoveException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-
 }

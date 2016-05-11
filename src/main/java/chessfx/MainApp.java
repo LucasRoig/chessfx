@@ -13,7 +13,7 @@ import java.util.Stack;
 
 import chessClassicData.ChessColors;
 import chessClassicData.Move;
-import chessClassicData.Position;
+import chessfx.core.board.Position;
 
 public class MainApp extends Application {
 
