@@ -14,7 +14,7 @@ import chessfx.core.Square;
  * Contient une position, c'est à dire le bitboard associé ainsi qu'un pointeur
  * vers la ou les prochaine positions ainsi que vers la position précédente.
  */
-public class Position implements IWritableGamePosition{
+public class Position implements IWritableGamePosition {
 	private short castleRights = 15;
 	// Droits roque
 	// 0001 - petit roque blanc
@@ -32,8 +32,8 @@ public class Position implements IWritableGamePosition{
 	boolean firstPositionOfLine;
 	int index; // Index de la position afin de la retrouver.
 
-	//================Constructeurs et autres===========
-	
+	// ================Constructeurs et autres===========
+
 	public Position(IBoard board) {
 		this.board = board;
 		this.setStarting();
@@ -42,7 +42,7 @@ public class Position implements IWritableGamePosition{
 	/**
 	 * Vide l'échiquier
 	 */
-	public void setEmpty(){
+	public void setEmpty() {
 		this.board.setEmpty();
 		this.castleRights = 15;
 		this.nextPosition = null;
@@ -53,12 +53,13 @@ public class Position implements IWritableGamePosition{
 		this.sublines = new ArrayList<>();
 		this.firstPositionOfLine = false;
 		this.setId(0);
-		
+
 	}
+
 	/**
 	 * Place l'échiquier dans la position de départ d'une partie
 	 */
-	public void setStarting(){
+	public void setStarting() {
 		this.board.setStarting();
 		this.castleRights = 15;
 		this.nextPosition = null;
@@ -72,8 +73,7 @@ public class Position implements IWritableGamePosition{
 	}
 
 	// ----------Getter Setter-------------------------
-	
-	
+
 	@Override
 	public Piece getPieceAt(Square s) {
 		return this.board.getPieceAt(s);
@@ -83,11 +83,11 @@ public class Position implements IWritableGamePosition{
 	public void setIsFirstOfTheLine(boolean b) {
 		this.firstPositionOfLine = b;
 	}
-	
-	public void removeSubline(IWritableGamePosition p){
+
+	public void removeSubline(IWritableGamePosition p) {
 		this.sublines.remove(p);
 	}
-	
+
 	public int getId() {
 		return index;
 	}
@@ -119,7 +119,7 @@ public class Position implements IWritableGamePosition{
 	public int getMoveCount() {
 		return moveCount;
 	}
-	
+
 	@Override
 	public boolean isWhiteToMove() {
 		return this.sideToMove == ChessColors.White;
@@ -128,8 +128,8 @@ public class Position implements IWritableGamePosition{
 	public List<IReadableGamePosition> getSublines() {
 		return sublines;
 	}
-	
-	public Square getEpSquare(){
+
+	public Square getEpSquare() {
 		return this.board.getEpSquare();
 	}
 
@@ -166,15 +166,17 @@ public class Position implements IWritableGamePosition{
 		this.castleRights &= ~8;
 	}
 	// --------------Tests sur la position-------------
-	
+
 	@Override
 	public List<Square> getValidTargets(Square from) {
+		if (this.board.getPieceAt(from) == null || this.board.getPieceAt(from).getColor() != this.sideToMove)
+			return new ArrayList<>();
 		List<Square> l = this.board.getTargets(from);
 		List<Square> res = new ArrayList<>();
 		for (Square to : l) {
 			Move m = new Move(from, to, this.board.getPieceAt(from));
 			try {
-				if(this.getPositionAfter(m).isLegal())
+				if (this.getPositionAfter(m).isLegal())
 					res.add(to);
 			} catch (InvalidPieceException e) {
 				// TODO Auto-generated catch block
@@ -182,21 +184,33 @@ public class Position implements IWritableGamePosition{
 			}
 		}
 		Piece movingPiece = this.board.getPieceAt(from);
-		if(movingPiece.getPieceType() == PieceType.King && (from == Square.E1 || from == Square.E8)){
-			if(movingPiece.getColor() == ChessColors.White){
-				if(canWhiteShortCastle()){
+		if (movingPiece.getPieceType() == PieceType.King && (from == Square.E1 || from == Square.E8)) {
+			if (movingPiece.getColor() == ChessColors.White) {
+				if (canWhiteShortCastle()) {
 					res.add(Square.G1);
 				}
-				if(canWhiteLongCastle()){
+				if (canWhiteLongCastle()) {
 					res.add(Square.C1);
 				}
-			}else{
-				if(canBlackShortCastle()){
+			} else {
+				if (canBlackShortCastle()) {
 					res.add(Square.G8);
 				}
-				if(canBlackLongCastle()){
+				if (canBlackLongCastle()) {
 					res.add(Square.C8);
 				}
+			}
+		}
+		return res;
+	}
+
+	@Override
+	public List<Move> getAllMoves() {
+		List<Move> res = new ArrayList<>();
+		for (Square from : Square.values()) {
+			for (Square to : this.getValidTargets(from)) {
+				Move m = new Move(from, to, this.board.getPieceAt(from));
+				res.add(m);
 			}
 		}
 		return res;
@@ -207,124 +221,67 @@ public class Position implements IWritableGamePosition{
 	 */
 	public boolean isLegal() {
 		// Vérifie que le camp n'étant pas au trait n'est pas en échec
-		if(this.sideToMove == ChessColors.White){
+		if (this.sideToMove == ChessColors.White) {
 			return !this.board.isBlackKingInCheck();
-		}else{
+		} else {
 			return !this.board.isWhiteKingInCheck();
 		}
 	}
 
-	
 	/**
 	 * Retourne true si le coup peut être joué dans la position actuelle
 	 */
 	/*
-	public boolean isMoveLegal(Move m) {
-		Piece p = this.getBitboard().getPieceAt(m.getFrom());
-		// Vérifie que la piece est sur la case de départ
-		if (p == null) {
-			return false;
-		}
-		// Vérifie que la pièce est de la bonne couleur
-		if (p.color != this.sideToMove) {
-			return false;
-		}
-
-		// Verifie si le joueur veut roquer
-		if (p.pieceType == PieceType.King && m.getFrom() == 4 && p.color == ChessColors.White) {
-			// Le roi est sur sa case de départ et veut bouger
-			if (m.getTo() == 2) {
-				// Blanc grand roque
-				if (!this.canWhiteLongCastle()) {
-					return false;
-				}
-				// Compte les pieces entre d1 et b1
-				if (!(this.bitboard.getPieceAt(1) == null && this.bitboard.getPieceAt(2) == null
-						&& this.bitboard.getPieceAt(3) == null)) {
-					return false;
-				}
-				// Aucune case menacée entre e1 et c1
-				long mask = (long) 7 << 2;
-				if ((mask & this.bitboard.getSquaresAttackedByBlack()) != 0) {
-					return false;
-				}
-				m.setWhiteLongCastle();
-				return true;
-			} else if (m.getTo() == 6) {
-				// Blanc petit roque
-				if (!this.canWhiteShortCastle()) {
-					return false;
-				}
-				// Compte les pieces entre f1 et g1
-				if (!(this.bitboard.getPieceAt(5) == null && this.bitboard.getPieceAt(6) == null)) {
-					return false;
-				}
-				// Aucune case menacée entre e1 et g1
-				long mask = (long) 7 << 4;
-				if ((mask & this.bitboard.getSquaresAttackedByBlack()) != 0) {
-					return false;
-				}
-				m.setWhiteShortCastle();
-				return true;
-			}
-		}
-		if (p.pieceType == PieceType.King && m.getFrom() == 60 && p.color == ChessColors.Black) {
-			if (m.getTo() == 58) {
-				// Noir grand roque
-				if (!this.canBlackLongCastle()) {
-					return false;
-				}
-				// Compte les pieces entre d8 et b8
-				if (!(this.bitboard.getPieceAt(57) == null && this.bitboard.getPieceAt(58) == null
-						&& this.bitboard.getPieceAt(59) == null)) {
-					return false;
-				}
-				// Aucune case menacée entre e8 et c8
-				long mask = (long) 7 << 58;
-				if ((mask & this.bitboard.getSquaresAttackedByWhite()) != 0) {
-					return false;
-				}
-				m.setBlackLongCastle();
-				return true;
-			}
-			if (m.getTo() == 62) {
-				// Noir petit roque
-				if (!this.canBlackShortCastle()) {
-					return false;
-				}
-				// Compte les pieces entre f8 et g8
-				if (!(this.bitboard.getPieceAt(61) == null && this.bitboard.getPieceAt(62) == null)) {
-					return false;
-				}
-				// Aucune case menacée entre e8 et c8
-				long mask = (long) 7 << 60;
-				if ((mask & this.bitboard.getSquaresAttackedByWhite()) != 0) {
-					return false;
-				}
-				m.setBlackShortCastle();
-				return true;
-			}
-		}
-		// Vérifie que la pièce peut se déplacer sur la case d'arrivée
-		long possibleMoves = p.possibleMoves(m.getFrom(), this.bitboard);
-		long squareToVector = (long) 1 << m.getTo();
-		if ((possibleMoves & squareToVector) == 0) {
-			return false;
-		}
-		// Vérifie que la position résultante est légale
-		Position newPosition = this.getPositionAfterMove(m);
-		if (!newPosition.isPositionLegal()) {
-			return false;
-		}
-		return true;
-	}*/
+	 * public boolean isMoveLegal(Move m) { Piece p =
+	 * this.getBitboard().getPieceAt(m.getFrom()); // Vérifie que la piece est
+	 * sur la case de départ if (p == null) { return false; } // Vérifie que la
+	 * pièce est de la bonne couleur if (p.color != this.sideToMove) { return
+	 * false; }
+	 * 
+	 * // Verifie si le joueur veut roquer if (p.pieceType == PieceType.King &&
+	 * m.getFrom() == 4 && p.color == ChessColors.White) { // Le roi est sur sa
+	 * case de départ et veut bouger if (m.getTo() == 2) { // Blanc grand roque
+	 * if (!this.canWhiteLongCastle()) { return false; } // Compte les pieces
+	 * entre d1 et b1 if (!(this.bitboard.getPieceAt(1) == null &&
+	 * this.bitboard.getPieceAt(2) == null && this.bitboard.getPieceAt(3) ==
+	 * null)) { return false; } // Aucune case menacée entre e1 et c1 long mask
+	 * = (long) 7 << 2; if ((mask & this.bitboard.getSquaresAttackedByBlack())
+	 * != 0) { return false; } m.setWhiteLongCastle(); return true; } else if
+	 * (m.getTo() == 6) { // Blanc petit roque if (!this.canWhiteShortCastle())
+	 * { return false; } // Compte les pieces entre f1 et g1 if
+	 * (!(this.bitboard.getPieceAt(5) == null && this.bitboard.getPieceAt(6) ==
+	 * null)) { return false; } // Aucune case menacée entre e1 et g1 long mask
+	 * = (long) 7 << 4; if ((mask & this.bitboard.getSquaresAttackedByBlack())
+	 * != 0) { return false; } m.setWhiteShortCastle(); return true; } } if
+	 * (p.pieceType == PieceType.King && m.getFrom() == 60 && p.color ==
+	 * ChessColors.Black) { if (m.getTo() == 58) { // Noir grand roque if
+	 * (!this.canBlackLongCastle()) { return false; } // Compte les pieces entre
+	 * d8 et b8 if (!(this.bitboard.getPieceAt(57) == null &&
+	 * this.bitboard.getPieceAt(58) == null && this.bitboard.getPieceAt(59) ==
+	 * null)) { return false; } // Aucune case menacée entre e8 et c8 long mask
+	 * = (long) 7 << 58; if ((mask & this.bitboard.getSquaresAttackedByWhite())
+	 * != 0) { return false; } m.setBlackLongCastle(); return true; } if
+	 * (m.getTo() == 62) { // Noir petit roque if (!this.canBlackShortCastle())
+	 * { return false; } // Compte les pieces entre f8 et g8 if
+	 * (!(this.bitboard.getPieceAt(61) == null && this.bitboard.getPieceAt(62)
+	 * == null)) { return false; } // Aucune case menacée entre e8 et c8 long
+	 * mask = (long) 7 << 60; if ((mask &
+	 * this.bitboard.getSquaresAttackedByWhite()) != 0) { return false; }
+	 * m.setBlackShortCastle(); return true; } } // Vérifie que la pièce peut se
+	 * déplacer sur la case d'arrivée long possibleMoves =
+	 * p.possibleMoves(m.getFrom(), this.bitboard); long squareToVector = (long)
+	 * 1 << m.getTo(); if ((possibleMoves & squareToVector) == 0) { return
+	 * false; } // Vérifie que la position résultante est légale Position
+	 * newPosition = this.getPositionAfterMove(m); if
+	 * (!newPosition.isPositionLegal()) { return false; } return true; }
+	 */
 
 	/**
 	 * retourne true si cette position est la premiere de la partie
 	 * 
 	 * @return
 	 */
-	public boolean isFirstPositionOfTheGame(){
+	public boolean isFirstPositionOfTheGame() {
 		return this.getPreviousPosition() == null;
 	}
 
@@ -345,7 +302,7 @@ public class Position implements IWritableGamePosition{
 	public boolean equals(IReadableBoard p) {
 		for (Square s : Square.values()) {
 			Piece piece = this.getPieceAt(s);
-			if(piece != null && !piece.equals(p.getPieceAt(s))){
+			if (piece != null && !piece.equals(p.getPieceAt(s))) {
 				return false;
 			}
 		}
@@ -359,7 +316,7 @@ public class Position implements IWritableGamePosition{
 		return this.getNextPosition() == null;
 	}
 
-	// --------------------------------------------------------------
+	// ==================================================================
 
 	/**
 	 * Ajoute la position p en tant que variante
@@ -379,10 +336,10 @@ public class Position implements IWritableGamePosition{
 	 * 
 	 * @param move
 	 * @return
-	 * @throws InvalidPieceException 
+	 * @throws InvalidPieceException
 	 */
 	public Position getPositionAfter(Move move) throws InvalidPieceException {
-		if (move.isCastle()){
+		if (move.isCastle()) {
 			return this.getPositionAfterCastle(move);
 		}
 		Position position = new Position(this.board.copy());
@@ -394,11 +351,16 @@ public class Position implements IWritableGamePosition{
 
 		// Manipulation des pièces
 		Piece pieceMoving = position.board.getPieceAt(move.getFrom());
+		move.setSide(pieceMoving.getColor());
 		position.board.removePieceAt(move.getFrom());
-		position.board.setPieceAt(move.getTo(),pieceMoving);
+		if (move.isPromotion())
+			position.board.setPieceAt(move.getTo(), move.getPromotionPiece());
+		else
+			position.board.setPieceAt(move.getTo(), pieceMoving);
 
 		// Pion avance de deux cases
-		if (pieceMoving.getPieceType() == PieceType.Pawn && Math.abs(move.getFrom().ordinal() - move.getTo().ordinal()) == 16) {
+		if (pieceMoving.getPieceType() == PieceType.Pawn
+				&& Math.abs(move.getFrom().ordinal() - move.getTo().ordinal()) == 16) {
 			// Un pion avance de deux cases.
 			if (pieceMoving.getColor() == ChessColors.White) {
 				position.board.setEpSquare(Square.values()[move.getFrom().ordinal() + 8]);
@@ -408,7 +370,8 @@ public class Position implements IWritableGamePosition{
 		}
 		// Prise en passant
 		if (pieceMoving.getPieceType() == PieceType.Pawn
-				&& (Math.abs(move.getFrom().ordinal() - move.getTo().ordinal()) == 7 || Math.abs(move.getFrom().ordinal() - move.getTo().ordinal()) == 9)) {
+				&& (Math.abs(move.getFrom().ordinal() - move.getTo().ordinal()) == 7
+						|| Math.abs(move.getFrom().ordinal() - move.getTo().ordinal()) == 9)) {
 			// Detection de la prise par un pion
 			if (this.board.getPieceAt(move.getTo()) == null) {
 				// Si la case d'arrivée est vide on a une prise en passant.
@@ -422,57 +385,57 @@ public class Position implements IWritableGamePosition{
 		}
 		// Roque
 		position.castleRights = this.castleRights;
-		if (move.getFrom() == Square.E1){
+		if (move.getFrom() == Square.E1) {
 			position.removeWhiteLongCastle();
 			position.removeWhiteShortCastle();
-		}else if (move.getFrom() == Square.E8){
+		} else if (move.getFrom() == Square.E8) {
 			position.removeBlackLongCastle();
 			position.removeBlackShortCastle();
-		}else if (move.getFrom() == Square.A1 || move.getTo() == Square.A1){
+		} else if (move.getFrom() == Square.A1 || move.getTo() == Square.A1) {
+			position.removeWhiteLongCastle();
+		} else if (move.getFrom() == Square.H1 || move.getTo() == Square.H1) {
 			position.removeWhiteShortCastle();
-		}else if (move.getFrom() == Square.H1 || move.getTo() == Square.H1){
-			position.removeWhiteShortCastle();
-		}else if (move.getFrom() == Square.A8 || move.getTo() == Square.A8){
+		} else if (move.getFrom() == Square.A8 || move.getTo() == Square.A8) {
 			position.removeBlackLongCastle();
-		}else if (move.getFrom() == Square.H8 || move.getTo() == Square.H8){
+		} else if (move.getFrom() == Square.H8 || move.getTo() == Square.H8) {
 			position.removeBlackShortCastle();
 		}
 
 		// Configure le coup
-		
+
 		position.lastMove = move;
-		if(this.board.getPieceAt(move.getTo()) != null){
+		if (this.board.getPieceAt(move.getTo()) != null) {
 			position.lastMove.setCaptures(true);
 		}
 		return position;
 	}
-	
-	private Position getPositionAfterCastle(Move m) throws InvalidPieceException{
+
+	private Position getPositionAfterCastle(Move m) throws InvalidPieceException {
 		Position position = new Position(this.board.copy());
 		position.board = this.board.copy();
 		position.setPreviousPosition(this);
 		// Compte des coups et changement du camp au trait
 		position.sideToMove = this.sideToMove == ChessColors.White ? ChessColors.Black : ChessColors.White;
 		position.moveCount = position.sideToMove == ChessColors.White ? (this.moveCount + 1) : this.moveCount;
-		
+
 		position.board.removePieceAt(m.getFrom());
-		if(m.getFrom() == Square.E1){
-			position.board.setPieceAt(m.getTo(),new Piece(ChessColors.White, PieceType.King));
-			if (m.isShortCastle()){
+		if (m.getFrom() == Square.E1) {
+			position.board.setPieceAt(m.getTo(), new Piece(ChessColors.White, PieceType.King));
+			if (m.isShortCastle()) {
 				position.board.removePieceAt(Square.H1);
 				position.board.setPieceAt(Square.F1, new Piece(ChessColors.White, PieceType.Rook));
-			}else{
+			} else {
 				position.board.removePieceAt(Square.A1);
 				position.board.setPieceAt(Square.D1, new Piece(ChessColors.White, PieceType.Rook));
 			}
 			position.removeWhiteLongCastle();
 			position.removeWhiteShortCastle();
-		}else{
+		} else {
 			position.board.setPieceAt(m.getTo(), new Piece(ChessColors.Black, PieceType.King));
-			if (m.isShortCastle()){
+			if (m.isShortCastle()) {
 				position.board.removePieceAt(Square.H8);
 				position.board.setPieceAt(Square.F8, new Piece(ChessColors.Black, PieceType.Rook));
-			}else{
+			} else {
 				position.board.removePieceAt(Square.A8);
 				position.board.setPieceAt(Square.D8, new Piece(ChessColors.Black, PieceType.Rook));
 			}

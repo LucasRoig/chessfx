@@ -3,22 +3,15 @@ package chessfx.ui.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
-import chessfx.core.Move;
 import chessfx.core.board.IReadableGamePosition;
-import chessfx.core.board.Position;
 import chessfx.core.game.IGameMoves;
 import chessfx.ui.MoveLabel;
 import chessfx.ui.model.GameSelectionModel;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.paint.Color;
 
 /**
  * Le notation pane affiche les informations sur la partie ainsi que les coups
@@ -59,36 +52,30 @@ public class NotationPaneController {
 		this.gameMoves = this.gameModel.getMoves();
 		int saveId = this.gameMoves.getCurrentPosition().getId();
 		this.gameMoves.goToFirstPosition();
-		generateMoveList(this.gameMoves.getCurrentPosition().getNextPosition().getId(), this.gameMoves.getCurrentPosition().getSublines());
+		if (this.gameMoves.getCurrentPosition().getNextPosition() != null)
+			generateMoveList(this.gameMoves.getCurrentPosition().getNextPosition().getId(),
+					this.gameMoves.getCurrentPosition().getSublines());
 		this.gameMoves.setCurrentPosition(saveId);
 	}
 
-	private void generateMoveList(int id,List<IReadableGamePosition> subline) {
+	private void generateMoveList(int id, List<IReadableGamePosition> subline) {
 		this.gameMoves.setCurrentPosition(id);
-		MoveLabel l = this.createLabel(this.gameMoves.getCurrentPosition().getLastMove());
+		IReadableGamePosition p = this.gameMoves.getCurrentPosition();
+		MoveLabel l = MoveLabel.createMoveLabel(p.getLastMove(), p.getMoveCount(), p.getId(),
+				p.isFirstPositionOfTheLine());
 		l.setOnMouseClicked(ClickOnLabelHandler);
-		if(this.gameModel.getCurrentPosition().get().getId() == l.getIndex())
+		if (this.gameModel.getCurrentPosition().get().getId() == l.getIndex())
 			l.setFocus();
 		this.flowPane.getChildren().add(l);
-		for(IReadableGamePosition p : subline){
+		for (IReadableGamePosition sub : subline) {
 			this.flowPane.getChildren().add(new Label("("));
-			generateMoveList(p.getId(), new ArrayList<IReadableGamePosition>());
+			generateMoveList(sub.getId(), new ArrayList<IReadableGamePosition>());
 			this.flowPane.getChildren().add(new Label(")"));
 		}
 		this.gameMoves.setCurrentPosition(id);
-		if(!this.gameMoves.getCurrentPosition().isLastPositionOfTheLine())
-			generateMoveList(this.gameMoves.getCurrentPosition().getNextPosition().getId(),this.gameMoves.getCurrentPosition().getSublines());
-	}
-	
-	private MoveLabel createLabel(Move m){
-		String s = "";
-		IReadableGamePosition p = this.gameMoves.getCurrentPosition();
-		if (!p.isWhiteToMove())
-			s += p.getMoveCount() + ". ";
-		else if (p.isFirstPositionOfTheLine())
-			s += p.getMoveCount() + "... ";
-		s += p.getLastMove().toString();
-		return new MoveLabel(s, p.getId());
+		if (!this.gameMoves.getCurrentPosition().isLastPositionOfTheLine())
+			generateMoveList(this.gameMoves.getCurrentPosition().getNextPosition().getId(),
+					this.gameMoves.getCurrentPosition().getSublines());
 	}
 
 }

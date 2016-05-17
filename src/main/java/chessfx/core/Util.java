@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Util {
-    
+
 	public static final long notAFile = Long.parseUnsignedLong("fefefefefefefefe", 16);
 	public static final long notBFile = Long.parseUnsignedLong("fdfdfdfdfdfdfdfd", 16);
 	public static final long notGFile = Long.parseUnsignedLong("bfbfbfbfbfbfbfbf", 16);
@@ -20,19 +20,21 @@ public class Util {
 
 	/**
 	 * Transforme un vecteur en liste de cases
+	 * 
 	 * @param vector
 	 * @return
 	 */
-	static public List<Square> vectorToSquareList(final long vector){
+	static public List<Square> vectorToSquareList(final long vector) {
 		long copy = vector;
 		ArrayList<Square> res = new ArrayList<>();
-		while(copy != 0){
+		while (copy != 0) {
 			int lsb = (int) Util.lessSignificantBit(copy);
 			res.add(Square.values()[lsb]);
-			copy &= ~((long) 1 << lsb); 
+			copy &= ~((long) 1 << lsb);
 		}
 		return res;
 	}
+
 	// Utilisé pour less significant bit
 	static int[] index64Less = { 0, 1, 48, 2, 57, 49, 28, 3, 61, 58, 50, 42, 38, 29, 17, 4, 62, 55, 59, 36, 53, 51, 43,
 			22, 45, 39, 33, 30, 24, 18, 12, 5, 63, 47, 56, 27, 60, 41, 37, 16, 54, 35, 52, 21, 44, 32, 23, 11, 46, 26,
@@ -245,13 +247,14 @@ public class Util {
 		}
 		return (c[0] - 97) + 8 * (Long.parseLong(str.substring(1)) - 1);
 	}
-	
+
 	/**
 	 * Retourne la lettre associée à la colonne de la case passée en paramètre
+	 * 
 	 * @param square
 	 * @return
 	 */
-	static public String getFileLetter(long square){
-		return String.valueOf((char)((square % 8) + 97));
+	static public String getFileLetter(long square) {
+		return String.valueOf((char) ((square % 8) + 97));
 	}
 }

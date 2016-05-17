@@ -1,5 +1,5 @@
 package chessfx.core;
 
 public enum PieceType {
-	Pawn,Knight,Bishop,Rook,Queen,King;
+	Pawn, Knight, Bishop, Rook, Queen, King;
 }

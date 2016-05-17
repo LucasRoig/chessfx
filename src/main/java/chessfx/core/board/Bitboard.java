@@ -1,6 +1,5 @@
 package chessfx.core.board;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +15,7 @@ import chessfx.core.Util;
  * @author Lucas
  *
  */
-public class Bitboard implements IBoard{
+public class Bitboard implements IBoard {
 	public long white; // Présence des pièces Blanches
 	public long black; // Présence des pièces Noires
 	public long pawns; // Présence des pions
@@ -27,7 +26,6 @@ public class Bitboard implements IBoard{
 	public long kings; // présence des rois
 	private long epSquare; // Vecteur contenant un 1 si une prise en passant est
 							// possible sur une case
-
 
 	// ============Constructeur et autres===========================
 	/**
@@ -40,7 +38,7 @@ public class Bitboard implements IBoard{
 	/**
 	 * Vide l'échiquier
 	 */
-	public void setEmpty(){
+	public void setEmpty() {
 		this.white = 0;
 		this.black = 0;
 		this.pawns = 0;
@@ -51,12 +49,11 @@ public class Bitboard implements IBoard{
 		this.kings = 0;
 		this.epSquare = 0;
 	}
-	
-	
+
 	/**
 	 * Place l'échiquier dans la position de départ d'une partie
 	 */
-	public void setStarting(){
+	public void setStarting() {
 		this.black = Long.parseUnsignedLong("18446462598732840960");
 		this.white = Long.parseUnsignedLong("65535");
 		this.pawns = Long.parseUnsignedLong("71776119061282560");
@@ -67,6 +64,7 @@ public class Bitboard implements IBoard{
 		this.kings = Long.parseUnsignedLong("1152921504606846992");
 		this.epSquare = 0;
 	}
+
 	/**
 	 * Renvoie un nouveau bitboard etant une copie du bitboard actuel
 	 */
@@ -82,14 +80,16 @@ public class Bitboard implements IBoard{
 		bitboard.kings = this.kings;
 		return bitboard;
 	}
+
 	/**
 	 * Retourne True si b est dans la meme disposition que le bitboard actuel
 	 * 
-	 * @param b Iboard           
+	 * @param b
+	 *            Iboard
 	 * @return
 	 */
 	public boolean equals(IReadableBoard b) {
-		for (int i = 0; i < 64; i++){
+		for (int i = 0; i < 64; i++) {
 			Square s = Square.values()[i];
 			if (!this.getPieceAt(s).equals(b.getPieceAt(s)))
 				return false;
@@ -99,38 +99,38 @@ public class Bitboard implements IBoard{
 		return true;
 	}
 
-	//======================En Passant=====================================
-	
+	// ======================En Passant=====================================
+
 	public void setEpSquare(Square s) {
 		this.epSquare = (long) 1 << s.ordinal();
 	}
 
 	public Square getEpSquare() {
-		if (this.epSquare == 0){
+		if (this.epSquare == 0) {
 			return Square.NoSquare;
-		}else{
+		} else {
 			return Square.values()[(int) Util.lessSignificantBit(epSquare)];
 		}
 	}
-	
-	//======================Echec==========================================
-	
+
+	// ======================Echec==========================================
+
 	/**
 	 * 
 	 * @return true si le roi blanc est en échec
 	 */
-	public boolean isWhiteKingInCheck(){
+	public boolean isWhiteKingInCheck() {
 		return (this.blackAttacks() & this.white & this.kings) != 0;
 	}
-	
+
 	/**
 	 * 
 	 * @return true si le roi noir est en échec
 	 */
-	public boolean isBlackKingInCheck(){
+	public boolean isBlackKingInCheck() {
 		return (this.whiteAttacks() & this.black & this.kings) != 0;
 	}
-	//=====================Manipulation des pieces========================
+	// =====================Manipulation des pieces========================
 
 	/**
 	 * Retourne la piece occupant la case passee en parametre retourne null si
@@ -169,6 +169,7 @@ public class Bitboard implements IBoard{
 
 	/**
 	 * Place la piece passee en parametre sur la case passee en parametre
+	 * 
 	 * @param piece
 	 * @param square
 	 */
@@ -190,8 +191,10 @@ public class Bitboard implements IBoard{
 			break;
 		case Queen:
 			this.queens |= vector;
+			break;
 		case King:
 			this.kings |= vector;
+			break;
 		}
 		switch (piece.getColor()) {
 		case White:
@@ -221,17 +224,18 @@ public class Bitboard implements IBoard{
 	}
 
 	// ---------Cases Attaquees--------------------
-	
+
 	/**
-	 * Retourne la liste des case atteignables par la piece située sur la case from
-	 * Ne vérifié pas la légalité des coups sous-entendus
+	 * Retourne la liste des case atteignables par la piece située sur la case
+	 * from Ne vérifié pas la légalité des coups sous-entendus
+	 * 
 	 * @param from
 	 * @return
 	 */
-	public List<Square> getTargets(Square from){
+	public List<Square> getTargets(Square from) {
 		Piece p = this.getPieceAt(from);
 		long res = 0;
-		if(p == null){
+		if (p == null) {
 			return new ArrayList<Square>();
 		}
 		switch (p.getPieceType()) {
@@ -256,94 +260,98 @@ public class Bitboard implements IBoard{
 		}
 		return Util.vectorToSquareList(res);
 	}
-	
+
 	@Override
 	public boolean canWhiteShortCastle() {
 		return (Long.parseUnsignedLong("70", 16) & this.blackAttacks()) == 0;
 	}
-	
+
 	@Override
 	public boolean canWhiteLongCastle() {
 		return (Long.parseUnsignedLong("1c", 16) & this.blackAttacks()) == 0;
 	}
-	
+
 	@Override
 	public boolean canBlackShortCastle() {
 		return (Long.parseUnsignedLong("7000000000000000", 16) & this.whiteAttacks()) == 0;
 	}
-	
+
 	@Override
 	public boolean canBlackLongCastle() {
 		return (Long.parseUnsignedLong("1c00000000000000", 16) & this.whiteAttacks()) == 0;
 	}
-	//=========================Privées========================
-	
+	// =========================Privées========================
+
 	/**
-	 * Renvoie les cases sur lesquelles un cavalier
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles un cavalier Ne vérifie pas la légalité
+	 * des coups
 	 */
-	private long knightTargets(Square s, ChessColors c){
+	private long knightTargets(Square s, ChessColors c) {
 		long vector = (long) 1 << s.ordinal();
-		if(c == ChessColors.White){
+		if (c == ChessColors.White) {
 			return this.knightAttacks(vector) & ~this.white;
-		}else{
+		} else {
 			return this.knightAttacks(vector) & ~this.black;
 		}
 	}
+
 	/**
-	 * Renvoie les cases sur lesquelles un fou
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles un fou Ne vérifie pas la légalité des
+	 * coups
 	 */
-	private long bishopTargets(Square s, ChessColors c){
+	private long bishopTargets(Square s, ChessColors c) {
 		long vector = (long) 1 << s.ordinal();
-		if(c == ChessColors.White){
+		if (c == ChessColors.White) {
 			return this.bishopAttacks(vector) & ~this.white;
-		}else{
+		} else {
 			return this.bishopAttacks(vector) & ~this.black;
 		}
 	}
+
 	/**
-	 * Renvoie les cases sur lesquelles une tour
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles une tour Ne vérifie pas la légalité des
+	 * coups
 	 */
-	private long rookTargets(Square s, ChessColors c){
+	private long rookTargets(Square s, ChessColors c) {
 		long vector = (long) 1 << s.ordinal();
-		if(c == ChessColors.White){
+		if (c == ChessColors.White) {
 			return this.rookAttacks(vector) & ~this.white;
-		}else{
+		} else {
 			return this.rookAttacks(vector) & ~this.black;
 		}
 	}
+
 	/**
-	 * Renvoie les cases sur lesquelles une dame
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles une dame Ne vérifie pas la légalité des
+	 * coups
 	 */
-	private long queenTargets(Square s, ChessColors c){
+	private long queenTargets(Square s, ChessColors c) {
 		long vector = (long) 1 << s.ordinal();
-		if(c == ChessColors.White){
+		if (c == ChessColors.White) {
 			return this.queenAttacks(vector) & ~this.white;
-		}else{
+		} else {
 			return this.queenAttacks(vector) & ~this.black;
 		}
 	}
+
 	/**
-	 * Renvoie les cases sur lesquelles un roi
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles un roi Ne vérifie pas la légalité des
+	 * coups
 	 */
-	private long kingTargets(Square s, ChessColors c){
+	private long kingTargets(Square s, ChessColors c) {
 		long vector = (long) 1 << s.ordinal();
-		if(c == ChessColors.White){
+		if (c == ChessColors.White) {
 			return this.kingAttacks(vector) & ~this.white;
-		}else{
+		} else {
 			return this.kingAttacks(vector) & ~this.black;
 		}
 	}
-	
+
 	/**
-	 * Renvoie les cases sur lesquelles un pion blanc peut se déplacer
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles un pion blanc peut se déplacer Ne
+	 * vérifie pas la légalité des coups
 	 */
-	private long whitePawnTargets(Square square){
+	private long whitePawnTargets(Square square) {
 		long moves = 0;
 		long squareVector = (long) 1 << square.ordinal();
 		long attackedSquares = this.whitePawnAttacks(squareVector);
@@ -352,15 +360,17 @@ public class Bitboard implements IBoard{
 		moves |= Util.northOne(squareVector);
 		// est sur la deuxieme rangée
 		if ((squareVector & (~Util.not2row)) != 0) {
-			moves |= Util.northOne(Util.northOne(squareVector));//2 vers le haut
+			moves |= Util.northOne(Util.northOne(squareVector));// 2 vers le
+																// haut
 		}
 		return moves &= ~this.white;
 	}
+
 	/**
-	 * Renvoie les cases sur lesquelles un pion blanc peut se déplacer
-	 * Ne vérifie pas la légalité des coups
+	 * Renvoie les cases sur lesquelles un pion blanc peut se déplacer Ne
+	 * vérifie pas la légalité des coups
 	 */
-	private long blackPawnTargets(Square square){
+	private long blackPawnTargets(Square square) {
 		long moves = 0;
 		long squareVector = (long) 1 << square.ordinal();
 		long attackedSquares = this.blackPawnAttacks(squareVector);
@@ -369,12 +379,15 @@ public class Bitboard implements IBoard{
 		moves |= Util.southOne(squareVector);
 		// est sur la deuxieme rangée
 		if ((squareVector & (~Util.not7row)) != 0) {
-			moves |= Util.southOne(Util.southOne(squareVector));//2 vers le haut
+			moves |= Util.southOne(Util.southOne(squareVector));// 2 vers le
+																// haut
 		}
 		return moves &= ~this.black;
 	}
+
 	/**
 	 * Retourne un vecteur contenant toutes les cases attaquées par les blancs
+	 * 
 	 * @return
 	 */
 	private long whiteAttacks() {
@@ -386,9 +399,10 @@ public class Bitboard implements IBoard{
 		resultat |= this.kingAttacks(this.white & this.kings);
 		return resultat;
 	}
-	
+
 	/**
 	 * Retourne un vecteur contenant toutes les cases attaquées par les blancs
+	 * 
 	 * @return
 	 */
 	private long blackAttacks() {
@@ -400,38 +414,41 @@ public class Bitboard implements IBoard{
 		resultat |= this.kingAttacks(this.black & this.kings);
 		return resultat;
 	}
-	
+
 	/**
-	 * Retourne un vecteur contenant les cases attaquées par les pions blancs depuis
-	 * les cases spécifiées dans le vecteur d'entrée
+	 * Retourne un vecteur contenant les cases attaquées par les pions blancs
+	 * depuis les cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long whitePawnAttacks(long fromVector){
+	private long whitePawnAttacks(long fromVector) {
 		long west = (fromVector << 9) & Util.notAFile;
 		long east = (fromVector << 7) & Util.notHFile;
 		return west | east;
 	}
-	
+
 	/**
-	 * Retourne un vecteur contenant les cases attaquées par les pions noirs depuis
-	 * les cases spécifiées dans le vecteur d'entrée
+	 * Retourne un vecteur contenant les cases attaquées par les pions noirs
+	 * depuis les cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long blackPawnAttacks(long fromVector){
+	private long blackPawnAttacks(long fromVector) {
 		long west = (fromVector >>> 9) & Util.notHFile;
 		long east = (fromVector >>> 7) & Util.notAFile;
 		return west | east;
 	}
-	
+
 	/**
-	 * Retourne un vecteur contenant les cases attaquées par les cavaliers depuis
-	 * les cases spécifiées dans le vecteur d'entrée
+	 * Retourne un vecteur contenant les cases attaquées par les cavaliers
+	 * depuis les cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long knightAttacks(long fromVector){
+	private long knightAttacks(long fromVector) {
 		long attack = (fromVector & Util.notAFile & Util.notBFile & Util.not1row) >>> 10;
 		attack |= (fromVector & Util.notAFile & Util.not1row & Util.not2row) >>> 17;
 		attack |= (fromVector & Util.notHFile & Util.not1row & Util.not2row) >>> 15;
@@ -442,14 +459,15 @@ public class Bitboard implements IBoard{
 		attack |= (fromVector & Util.notAFile & Util.notBFile & Util.not8row) << 6;
 		return attack;
 	}
-	
+
 	/**
-	 * Retourne un vecteur contenant les cases attaquées par les fous depuis
-	 * les cases spécifiées dans le vecteur d'entrée
+	 * Retourne un vecteur contenant les cases attaquées par les fous depuis les
+	 * cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long bishopAttacks(long fromVector){
+	private long bishopAttacks(long fromVector) {
 		ArrayList<Long> bishopsList = new ArrayList<>();
 		long copyVector = fromVector;
 		while (copyVector != 0) {
@@ -498,14 +516,15 @@ public class Bitboard implements IBoard{
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Retourne un vecteur contenant les cases attaquées par les tours depuis
 	 * les cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long rookAttacks (long fromVector){
+	private long rookAttacks(long fromVector) {
 		ArrayList<Long> rooksList = new ArrayList<>();
 		long copyVector = fromVector;
 		while (copyVector != 0) {
@@ -555,24 +574,26 @@ public class Bitboard implements IBoard{
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Retourne un vecteur contenant les cases attaquées par les dames depuis
 	 * les cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long queenAttacks(long fromVector){
+	private long queenAttacks(long fromVector) {
 		return this.rookAttacks(fromVector) | this.bishopAttacks(fromVector);
 	}
-	
+
 	/**
-	 * Retourne un vecteur contenant les cases attaquées par les Rois depuis
-	 * les cases spécifiées dans le vecteur d'entrée
+	 * Retourne un vecteur contenant les cases attaquées par les Rois depuis les
+	 * cases spécifiées dans le vecteur d'entrée
+	 * 
 	 * @param fromVector
 	 * @return
 	 */
-	private long kingAttacks(long fromVector){
+	private long kingAttacks(long fromVector) {
 		long attack = Util.eastOne(fromVector) | Util.westOne(fromVector);
 		fromVector |= attack;
 		attack |= Util.northOne(fromVector) | Util.southOne(fromVector);

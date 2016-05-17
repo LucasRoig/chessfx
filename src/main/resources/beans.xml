@@ -21,4 +21,8 @@
 	<bean id="gameSelectionModel" class="chessfx.ui.model.GameSelectionModel">
 		<constructor-arg ref="game" />
 	</bean>
+	
+	<bean id="pgnReader" class="chessfx.pgn.PgnReader">
+		<constructor-arg ref="game" />
+	</bean>
 </beans>

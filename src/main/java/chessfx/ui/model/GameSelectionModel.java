@@ -9,6 +9,7 @@ import chessfx.core.Square;
 import chessfx.core.board.IReadableGamePosition;
 import chessfx.core.game.IGame;
 import chessfx.core.game.IGameMoves;
+import chessfx.ui.controllers.PromotionHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -22,6 +23,7 @@ public class GameSelectionModel {
 	private ObjectProperty<IReadableGamePosition> currentPosition = new SimpleObjectProperty<>();
 	private IGame game;
 	private IGameMoves gameMoves;
+	private PromotionHandler promotionHandler;
 
 	public GameSelectionModel(IGame iGame) {
 		this.game = iGame;
@@ -30,13 +32,18 @@ public class GameSelectionModel {
 		this.currentPosition.set(this.gameMoves.getCurrentPosition());
 	}
 
+	public void setPromotionHandler(PromotionHandler promotionHandler) {
+		this.promotionHandler = promotionHandler;
+	}
+
 	public ObjectProperty<IReadableGamePosition> getCurrentPosition() {
 		return currentPosition;
 	}
 
-	public IGameMoves getMoves(){
+	public IGameMoves getMoves() {
 		return this.gameMoves;
 	}
+
 	public void goToNextMove() {
 		this.gameMoves.goToNextPosition();
 		this.getCurrentPosition().set(this.gameMoves.getCurrentPosition());
@@ -55,13 +62,16 @@ public class GameSelectionModel {
 	public Piece getPieceAt(Square s) {
 		return currentPosition.get().getPieceAt(s);
 	}
-	
-	public List<Square>getLegalTargets(Square from){
+
+	public List<Square> getLegalTargets(Square from) {
 		return this.getCurrentPosition().get().getValidTargets(from);
 	}
 
 	public void userMakesLegalMove(Square from, Square to) {
 		Move m = new Move(from, to, this.getPieceAt(from));
+		if (m.isPromotion()) {
+			m.setPromotionPiece(this.promotionHandler.askPromotion());
+		}
 		try {
 			this.gameMoves.addPositionAndGoTo(this.getCurrentPosition().get().getPositionAfter(m));
 		} catch (InvalidPieceException e) {

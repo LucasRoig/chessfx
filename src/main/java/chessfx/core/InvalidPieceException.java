@@ -1,5 +1,5 @@
 package chessfx.core;
 
-public class InvalidPieceException extends Exception{
+public class InvalidPieceException extends Exception {
 
 }

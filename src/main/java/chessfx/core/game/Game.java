@@ -1,9 +1,9 @@
 package chessfx.core.game;
 
-public class Game implements IGame{
+public class Game implements IGame {
 
 	private IGameMoves gameMoves;
-	
+
 	public Game(IGameMoves gameMoves) {
 		this.gameMoves = gameMoves;
 	}

@@ -70,7 +70,7 @@ public class BoardController {
 	}
 
 	private void updatePosition() {
-		if (this.from != Square.NoSquare){
+		if (this.from != Square.NoSquare) {
 			this.squareTab[this.from.ordinal()].showBorder(false);
 			this.from = Square.NoSquare;
 			this.legalTargets.clear();
@@ -91,10 +91,10 @@ public class BoardController {
 			this.squareTab[square.ordinal()].showBorder(false);
 			this.legalTargets.clear();
 		} else {
-			if(this.legalTargets.contains(square)){
-				//Le coup est legal
+			if (this.legalTargets.contains(square)) {
+				// Le coup est legal
 				this.gameModel.userMakesLegalMove(this.from, square);
-			}else{
+			} else {
 				this.squareTab[this.from.ordinal()].showBorder(false);
 				this.from = Square.NoSquare;
 				this.legalTargets.clear();
