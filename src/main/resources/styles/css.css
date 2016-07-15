@@ -1,3 +1,4 @@
-.background{
+.notationPane{
 	-fx-background-color : #FFE4C4;
+	-fx-font-family : monospace;
 	}

@@ -10,15 +10,11 @@
 
 <BorderPane fx:id="borderPane" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="chessfx.ui.controllers.MainWindowController">
    <top>
-      <VBox BorderPane.alignment="CENTER" fx:id="menuBar">
+      <VBox fx:id="menuBar" BorderPane.alignment="CENTER">
          <children>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="File">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Open Pgn" onAction="#handleOpenPgn"/>
-                  </items>
-                </Menu>
+                <Menu mnemonicParsing="false" text="File" />
                 <Menu mnemonicParsing="false" text="Edit">
                   <items>
                     <MenuItem mnemonicParsing="false" text="Delete" />

@@ -25,4 +25,8 @@
 	<bean id="pgnReader" class="chessfx.pgn.PgnReader">
 		<constructor-arg ref="game" />
 	</bean>
+	
+	<bean id="opening" class="chessfx.core.game.Opening">
+		<constructor-arg ref="gameMoves" />
+	</bean>
 </beans>

@@ -1,6 +1,10 @@
 package chessfx.ui.model;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import chessfx.core.InvalidPieceException;
 import chessfx.core.Move;
@@ -24,7 +28,8 @@ public class GameSelectionModel {
 	private IGame game;
 	private IGameMoves gameMoves;
 	private PromotionHandler promotionHandler;
-
+	private List<ChangeListener> listeners = new ArrayList<>();
+	
 	public GameSelectionModel(IGame iGame) {
 		this.game = iGame;
 		this.gameMoves = this.game.getMoves();
@@ -32,6 +37,22 @@ public class GameSelectionModel {
 		this.currentPosition.set(this.gameMoves.getCurrentPosition());
 	}
 
+	public void addListener(ChangeListener c){
+		this.listeners.add(c);
+	}
+	public void setGame(IGame g) {
+		this.game = g;
+		this.gameMoves = g.getMoves();
+		this.gameMoves.goToFirstPosition();
+		this.currentPosition.set(gameMoves.getCurrentPosition());
+	}
+
+	public void change(){
+		ChangeEvent e = new ChangeEvent(this);
+		for (ChangeListener changeListener : listeners) {
+			changeListener.stateChanged(e);
+		}
+	}
 	public void setPromotionHandler(PromotionHandler promotionHandler) {
 		this.promotionHandler = promotionHandler;
 	}

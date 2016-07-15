@@ -2,25 +2,31 @@ package chessfx.ui.controllers;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Optional;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import chessfx.core.PieceType;
+import chessfx.core.game.GameFactory;
 import chessfx.core.game.IGame;
+import chessfx.data.Database;
 import chessfx.pgn.PgnReader;
+import chessfx.ui.DatabaseView;
 import chessfx.ui.model.GameSelectionModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -29,6 +35,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 
 public class MainWindowController implements PromotionHandler {
@@ -46,12 +53,12 @@ public class MainWindowController implements PromotionHandler {
 	OpeningTreeController openingTreeController;
 	Stage openingTreeStage;
 
-	ApplicationContext ap;
+	Database data;
+	File dataPath = new File("data.cot");
+	DatabaseView dataView = new DatabaseView();
 
 	@FXML
 	public void initialize() throws Exception {
-		ap = new ClassPathXmlApplicationContext("beans.xml");
-
 		String fxmlFile = "/fxml/board.fxml";
 		FXMLLoader loader = new FXMLLoader();
 		board = (GridPane) loader.load(getClass().getResourceAsStream(fxmlFile));
@@ -79,32 +86,20 @@ public class MainWindowController implements PromotionHandler {
 		notationPaneController = loader.getController();
 		notationPane.setPrefWidth(300);
 
+		if (dataPath.exists()) {
+			this.loadData(dataPath);
+		} else {
+			this.data = new Database();
+		}
+		dataView.setData(this.data);
+		dataView.update();
+		notationPaneController.setData(data);
+
 		borderPane.setCenter(centralPane);
 		borderPane.setRight(notationPane);
+		borderPane.setLeft(dataView);
 
-		this.setGame((IGame) ap.getBean("game"));
-	}
-
-	public void handleOpenPgn() {
-		FileChooser fChooser = new FileChooser();
-		fChooser.setSelectedExtensionFilter(new ExtensionFilter("Pgn Files", "*.pgn"));
-		File choosenFile = fChooser.showOpenDialog(borderPane.getScene().getWindow());
-		if (choosenFile != null) {
-			FileReader in;
-			try {
-				in = new FileReader(choosenFile);
-				BufferedReader br = new BufferedReader(in);
-				PgnReader reader = new PgnReader((IGame) ap.getBean("game"));
-				reader.setReader(br);
-				this.setGame(reader.parseGame());
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		this.setGame(new GameFactory().getGame());
 	}
 
 	public void openOpeningTree() throws IOException {
@@ -115,6 +110,7 @@ public class MainWindowController implements PromotionHandler {
 
 	public void setGame(IGame g) {
 		this.gameModel = new GameSelectionModel(g);
+		this.dataView.setModel(this.gameModel);
 		this.gameModel.setPromotionHandler(this);
 		boardController.setGameModel(this.gameModel);
 		notationPaneController.setGameModel(this.gameModel);
@@ -148,6 +144,63 @@ public class MainWindowController implements PromotionHandler {
 		});
 		Optional<PieceType> result = dialog.showAndWait();
 		return result.get();
+	}
+
+	public void setStage(Stage s) {
+		s.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				if (!dataPath.exists()) {
+					try {
+						dataPath.createNewFile();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				saveData(dataPath);
+			}
+		});
+	}
+
+	public void loadData(File f) {
+		ObjectInputStream ois = null;
+		try {
+			FileInputStream in = new FileInputStream(f);
+			ois = new ObjectInputStream(in);
+			Database d = (Database) ois.readObject();
+			this.data = d;
+		} catch (final Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (ois != null) {
+					ois.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
+
+	public void saveData(File f) {
+		ObjectOutputStream oos = null;
+		try {
+			FileOutputStream out = new FileOutputStream(f);
+			oos = new ObjectOutputStream(out);
+			oos.writeObject(this.data);
+			oos.flush();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (oos != null) {
+					oos.flush();
+					oos.close();
+				}
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
 	}
 
 }

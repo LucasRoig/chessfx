@@ -1,11 +1,12 @@
 package chessfx.core.game;
 
+import java.io.Serializable;
 import java.util.Hashtable;
 
 import chessfx.core.board.IReadableGamePosition;
 import chessfx.core.board.IWritableGamePosition;
 
-public class GameMoves implements IGameMoves {
+public class GameMoves implements IGameMoves, Serializable {
 
 	private int nextAvailableId = 0;
 	private IWritableGamePosition currentPosition;
@@ -29,7 +30,10 @@ public class GameMoves implements IGameMoves {
 		if (!this.getCurrentPosition().isFirstPositionOfTheGame())
 			this.setCurrentPosition(this.getCurrentPosition().getPreviousPosition().getId());
 	}
-
+	
+	/**
+	 * Va à la première position de la variante ou de la partie si l'on se trouve dans la ligne principale.
+	 */
 	@Override
 	public void goToBeginningOfLine() {
 		while (!this.currentPosition.isFirstPositionOfTheGame() && !this.currentPosition.isFirstPositionOfTheLine()) {
@@ -42,6 +46,9 @@ public class GameMoves implements IGameMoves {
 		return this.currentPosition;
 	}
 
+	/**
+	 * Va à la première position de la partie
+	 */
 	@Override
 	public void goToFirstPosition() {
 		while (!this.getCurrentPosition().isFirstPositionOfTheGame()) {

@@ -1,5 +1,6 @@
 package chessfx.core.board;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import chessfx.core.Square;
  * Contient une position, c'est à dire le bitboard associé ainsi qu'un pointeur
  * vers la ou les prochaine positions ainsi que vers la position précédente.
  */
-public class Position implements IWritableGamePosition {
+public class Position implements IWritableGamePosition, Serializable {
 	private short castleRights = 15;
 	// Droits roque
 	// 0001 - petit roque blanc

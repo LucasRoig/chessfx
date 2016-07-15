@@ -29,6 +29,7 @@ public class PgnReader {
 		parseHeader();
 		while (line != null) {
 			cleanLine();
+			System.out.println(line);
 			int i = 0;
 			StringBuffer token = new StringBuffer();
 			while (i < line.length()) {
@@ -39,6 +40,7 @@ public class PgnReader {
 					exitVariation();
 				} else if (c == ' ') {
 					String san = token.toString();
+					//System.out.println(san);
 					token.setLength(0);
 					san.replaceAll("\\s", "");
 					if (san.length() > 0) {

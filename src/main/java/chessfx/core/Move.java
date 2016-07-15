@@ -1,11 +1,12 @@
 package chessfx.core;
 
+import java.io.Serializable;
 import java.util.List;
 
 import chessfx.core.Piece;
 import chessfx.core.board.IPosition;
 
-public class Move {
+public class Move implements Serializable {
 	// 00000000 00000000 00000000 00111111 = from square = bits 1-6
 	// 00000000 00000000 00001111 11000000 = to square = bits 7-12
 	// 00000000 00000000 01110000 00000000 = piece type = bits 13-15
@@ -76,6 +77,9 @@ public class Move {
 	}
 
 	static public Move getMoveFromSan(String san, IPosition p) throws Exception {
+		if(san.equals("c5")){
+			System.out.println();
+		}
 		// TODO : Réécrire la méthode, 1 : Trier pour la piece 2 : Trier pour
 		// les cases. Conserver la san d'origine pour debug.
 		san = san.replace("#", "");
@@ -88,7 +92,7 @@ public class Move {
 				}
 			}
 			throw new Exception("Invalid san : " + san);
-		} else if (san.equals("0-0-0")) {
+		} else if (san.equals("O-O-O")) {
 			for (Move m : possibleMoves) {
 				if (m.isLongCastle()) {
 					return m;

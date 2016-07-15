@@ -15,9 +15,9 @@ public class MoveLabel extends Label {
 	public static MoveLabel createMoveLabel(Move m, int moveCount, int id, boolean firstOfLine) {
 		String s = "";
 		if (m.getSide() == ChessColors.White)
-			s += moveCount + ". ";
+			s += moveCount + ".";
 		else if (firstOfLine)
-			s += (moveCount - 1) + "... ";
+			s += (moveCount - 1) + "...";
 		s += m.toString();
 		return new MoveLabel(s, id);
 	}

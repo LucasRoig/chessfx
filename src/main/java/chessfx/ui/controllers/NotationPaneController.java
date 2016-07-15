@@ -3,8 +3,12 @@ package chessfx.ui.controllers;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import chessfx.core.board.IReadableGamePosition;
 import chessfx.core.game.IGameMoves;
+import chessfx.data.Database;
 import chessfx.ui.MoveLabel;
 import chessfx.ui.model.GameSelectionModel;
 import javafx.event.Event;
@@ -32,6 +36,7 @@ public class NotationPaneController {
 			gameModel.goToPosition(l.getIndex());
 		}
 	};
+	private Database data;
 
 	@FXML
 	public void initialize() {
@@ -44,6 +49,14 @@ public class NotationPaneController {
 		this.gameMoves = this.gameModel.getMoves();
 		gameModel.getCurrentPosition().addListener((observable, oldValue, newValue) -> {
 			updateMoveList();
+		});
+		gameModel.addListener(new ChangeListener() {
+			
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				updateMoveList();
+				
+			}
 		});
 	}
 
@@ -77,5 +90,8 @@ public class NotationPaneController {
 			generateMoveList(this.gameMoves.getCurrentPosition().getNextPosition().getId(),
 					this.gameMoves.getCurrentPosition().getSublines());
 	}
-
+	
+	public void setData(Database data){
+		this.data = data;
+	}
 }

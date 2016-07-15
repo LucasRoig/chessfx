@@ -1,8 +1,10 @@
 package chessfx.core.board;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import chessfx.core.BitOp;
 import chessfx.core.ChessColors;
 import chessfx.core.Piece;
 import chessfx.core.PieceType;
@@ -15,7 +17,7 @@ import chessfx.core.Util;
  * @author Lucas
  *
  */
-public class Bitboard implements IBoard {
+public class Bitboard implements IBoard, Serializable {
 	public long white; // Présence des pièces Blanches
 	public long black; // Présence des pièces Noires
 	public long pawns; // Présence des pions
@@ -359,7 +361,7 @@ public class Bitboard implements IBoard {
 		moves = attackedSquares & (this.black | ep);
 		moves |= Util.northOne(squareVector);
 		// est sur la deuxieme rangée
-		if ((squareVector & (~Util.not2row)) != 0) {
+		if ((squareVector & (~Util.not2row)) != 0 && ((Util.northOne(squareVector) & (this.white | this.black)) == 0) ) {
 			moves |= Util.northOne(Util.northOne(squareVector));// 2 vers le
 																// haut
 		}
@@ -378,7 +380,7 @@ public class Bitboard implements IBoard {
 		moves = attackedSquares & (this.white | ep);
 		moves |= Util.southOne(squareVector);
 		// est sur la deuxieme rangée
-		if ((squareVector & (~Util.not7row)) != 0) {
+		if ((squareVector & (~Util.not7row)) != 0 && ((Util.southOne(squareVector) & (this.white | this.black)) == 0) ) {
 			moves |= Util.southOne(Util.southOne(squareVector));// 2 vers le
 																// haut
 		}
@@ -477,42 +479,10 @@ public class Bitboard implements IBoard {
 		}
 		long result = 0;
 		for (Long bishop : bishopsList) {
-			// Nord Ouest
-			long withoutCollisions = Util.northWest(bishop);
-			long collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.lessSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.northWest(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
-			// Nord Est
-			withoutCollisions = Util.northEast(bishop);
-			collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.lessSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.northEast(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
-			// Sud Est
-			withoutCollisions = Util.southEast(bishop);
-			collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.mostSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.southEast(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
-			// Sud Ouest
-			withoutCollisions = Util.southWest(bishop);
-			collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.mostSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.southWest(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
+			result |= this.rangeAttack(bishop, Util.NorthWest, Util.LessSignificantBit);
+			result |= this.rangeAttack(bishop, Util.NorthEast, Util.LessSignificantBit);
+			result |= this.rangeAttack(bishop, Util.SouthWest, Util.MostSignificantBit);
+			result |= this.rangeAttack(bishop, Util.SouthEast, Util.MostSignificantBit);
 		}
 		return result;
 	}
@@ -535,44 +505,23 @@ public class Bitboard implements IBoard {
 		}
 		long result = 0;
 		for (Long rook : rooksList) {
-			// Deplacement vers le haut
-			long withoutCollisions = Util.north(rook);
-			long collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.lessSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.north(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
-			// Deplacement vers le bas
-			withoutCollisions = Util.south(rook);
-			collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.mostSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.south(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
-			// Deplacement vers l'est
-			withoutCollisions = Util.east(rook);
-			collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.lessSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.east(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
-			// Deplacement vers l'ouest
-			withoutCollisions = Util.west(rook);
-			collisions = withoutCollisions & (this.white | this.black);
-			if (collisions != 0) {
-				long firstCollision = Util.mostSignificantBit(collisions);
-				result |= (withoutCollisions ^ Util.west(firstCollision));
-			} else {
-				result |= withoutCollisions;
-			}
+			result |= this.rangeAttack(rook, Util.North, Util.LessSignificantBit);
+			result |= this.rangeAttack(rook, Util.East, Util.LessSignificantBit);
+			result |= this.rangeAttack(rook, Util.West, Util.MostSignificantBit);
+			result |= this.rangeAttack(rook, Util.South, Util.MostSignificantBit);
 		}
 		return result;
+	}
+	
+	private long rangeAttack(long position, BitOp direction, BitOp significantBit){
+		long withoutCollisions = direction.apply(position);
+		long collision = withoutCollisions & (this.white | this.black);
+		if(collision != 0){
+			long firstCollision = significantBit.apply(collision);
+			return withoutCollisions ^ direction.apply(firstCollision);
+		}else{
+			return withoutCollisions;
+		}
 	}
 
 	/**

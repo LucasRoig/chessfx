@@ -1,5 +1,6 @@
 package chessfx;
 
+import chessfx.ui.controllers.MainWindowController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,10 +19,11 @@ public class MainApp extends Application {
 		FXMLLoader loader = new FXMLLoader();
 		Parent rootNode = (Parent) loader.load(getClass().getResourceAsStream(fxmlFile));
 
-		Scene scene = new Scene(rootNode, 1050, 750);
+		Scene scene = new Scene(rootNode, 1600, 900);
 		scene.getStylesheets().add("/styles/css.css");
 		stage.setTitle("Chess Fx");
 		stage.setScene(scene);
+		((MainWindowController) loader.getController()).setStage(stage);
 		stage.show();
 
 		// ConsoleInterface();

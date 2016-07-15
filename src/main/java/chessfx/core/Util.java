@@ -18,6 +18,17 @@ public class Util {
 	public static final long row1 = ~not1row;
 	public static final long row8 = ~not8row;
 
+	public static final BitOp MostSignificantBit = x -> Util.mostSignificantBit(x);
+	public static final BitOp LessSignificantBit = x -> Util.lessSignificantBit(x);
+	public static final BitOp South = x -> Util.south(x);
+	public static final BitOp North = x -> Util.north(x);
+	public static final BitOp East = x -> Util.east(x);
+	public static final BitOp West = x -> Util.west(x);
+	public static final BitOp SouthWest = x -> Util.southWest(x);
+	public static final BitOp SouthEast = x -> Util.southEast(x);
+	public static final BitOp NorthWest = x -> Util.northWest(x);
+	public static final BitOp NorthEast = x -> Util.northEast(x);
+	
 	/**
 	 * Transforme un vecteur en liste de cases
 	 * 
